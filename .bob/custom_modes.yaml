@@ -15,7 +15,7 @@ customModes:
       acme-platform/.
 
 
-      Before planning, read docs/01-playbook-amendments.md and follow its
+      Before planning, read every file in .bob/rules-cve-autopilot/ and follow its
       rules; they take precedence over the playbook below.
 
       Playbook:

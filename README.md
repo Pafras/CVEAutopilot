@@ -22,7 +22,7 @@ repair breaking changes and verify with tests.
 
 ## How it works
 
-See [`docs/architecture.md`](architecture.md) for the full Mermaid flowchart.
+See [`docs/architecture.md`](docs/architecture.md) for the full Mermaid flowchart.
 
 In short: Bob reads the advisory PDF in **Plan mode** (extract CVEs, pip-audit cross-check, find usages,
 mark unaffected services), waits for human approval, then switches to **Agent mode** and runs one
@@ -61,7 +61,7 @@ Then open `acme-platform/remediation/sla-dashboard.html` in a browser.
 ## Security
 Based on the [IBM hackathon template](https://github.com/watsonxhackathon/ibm-hackathon-template):
 `.gitignore` and `.bobignore` keep credentials out of git and Bob session logs.
-Copy `.env.example` to `.env` for any keys, and read [docs/SECURITY.MD](SECURITY.MD) before committing.
+Copy `.env.example` to `.env` for any keys, and read [SECURITY.MD](SECURITY.MD) before committing.
 
 ## License
 MIT

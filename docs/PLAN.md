@@ -132,7 +132,7 @@ Notes:
 ## DECIDED: upgrade breakdown (Sat 26 Sep ~18:00 WITA) — tracked as GitHub issues
 Deadline for all upgrades: **Sun 12:00 WITA**; anything unfinished is dropped (current version is already submittable).
 File ownership (avoid push conflicts): Pafras = `.bob/`, `acme-platform/services/`, `acme-platform/security/` ·
-Erin = `docs/`, `docs/README.md`, slides/video content · Dyan = `app.py`, root `requirements.txt`, `.github/workflows/`.
+Erin = `docs/`, `README.md`, slides/video content · Dyan = `app.py`, root `requirements.txt`, `.github/workflows/`.
 
 | Who | Issue | Plan ref | Coins |
 |---|---|---|---|
@@ -160,7 +160,7 @@ Closed: #1 (E1), #2 (E2). PR #5 merged 367e9e1.
 ### Rebalanced (Sat ~18:10): Erin focuses on video + slides
 - Moved to Dyan: #15 V3 manual timing, #16 V5 SBOM, #17 U5 COMPLIANCE.md + README fix.
 - Erin keeps presentation work only: #3 slides, #4 video, #18 user quotes, #19 ROI + trust slide content.
-- File ownership update: Dyan now also owns `docs/COMPLIANCE.md`, `docs/README.md`, `acme-platform/remediation/sbom/`.
+- File ownership update: Dyan now also owns `docs/COMPLIANCE.md`, `README.md`, `acme-platform/remediation/sbom/`.
 - Dyan order: #6 Streamlit (critical) → #8 scorecard tab (after #9) → #16 SBOM → #17 COMPLIANCE → #7 GitHub Action → #15 manual timing.
   Anything not done by Sun 12:00 is dropped; #6 is the only must-have.
 
