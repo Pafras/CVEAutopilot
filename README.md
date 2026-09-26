@@ -33,8 +33,7 @@ entry, PR description, and a self-contained SLA dashboard. The Streamlit app dis
 
 1. Open the repo root as your workspace in Bob IDE (the CVE Autopilot mode lives in `.bob/` at the root).
 2. Select the **CVE Autopilot** custom mode.
-3. Start in **Plan mode** and paste the prompt below. Approve the plan when Bob presents it, then Bob
-   switches to Agent mode automatically.
+3. Select the **CVE Autopilot mode** and paste the prompt below. Bob stops once for plan approval, then executes.
 
 ```
 Mode: CVE Autopilot. Remediate acme-platform/security/advisory-2026-09.pdf end to end.
