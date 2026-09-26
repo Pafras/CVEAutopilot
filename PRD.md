@@ -1,6 +1,6 @@
 # CVE Autopilot — PRD
 
-**Status:** v2, pre-kickoff · **Team:** Orphane · **Deadline:** Sep 27, 23:00 WITA
+**Status:** v2, pre-kickoff · **Team:** Diapers · **Deadline:** Sep 27, 23:00 WITA
 **Challenge fit:** Maintenance + Release readiness ("review dependencies, summarise risks").
 **Positioning:** patch-SLA compliance evidence, not "AI saves developer time". Autopilot closes the CVE,
 fixes the code the upgrade breaks, and produces the evidence an auditor asks for.
@@ -98,7 +98,7 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 ## 9. Constraints
 - **Bob IDE is the core component.** All solution code is Bob-assisted.
 - **40 Bobcoins per member (3 members), no top-ups.** Few, large, well-specified tasks. Point Bob to this PRD instead of re-explaining.
-- **Evidence:** PNG task-summary screenshot per Bob task, from every member, in `bob_sessions/` (`orphane_<member>_taskNN_<topic>_summary.png`).
+- **Evidence:** PNG task-summary screenshot per Bob task, from every member, in `bob_sessions/` (`diapers_<member>_taskNN_<topic>_summary.png`).
 - **Data:** no client/confidential/personal/social-media data. `acme-platform/` is our own sample code.
   CVE data from public sources that allow commercial use (see §11).
 - Repo public, MIT license.

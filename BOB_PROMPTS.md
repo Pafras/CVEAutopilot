@@ -4,7 +4,7 @@ Budget: 40 Bobcoins PER MEMBER (3 × 40), no top-ups. Rules for every task:
 - Account = hackathon enterprise plan (Settings → General shows Budget 40.00) before the first prompt.
 - One prompt = one Bob task. Paste as-is. Don't chat back and forth; if stuck, use F1/F2.
 - After each task: Tasks → select task → click header → PNG to
-  `bob_sessions/orphane_<member>_taskNN_<topic>_summary.png` (member = pafras / erin / dyan).
+  `bob_sessions/diapers_<member>_taskNN_<topic>_summary.png` (member = pafras / erin / dyan).
 - Check coin usage in Settings → General after each task; write it in the log at the bottom.
 - Never paste API keys, passwords or tokens into a prompt.
 
@@ -81,7 +81,7 @@ Playbook:
 
 ---
 
-## T1 — Dry run, billing only, **Pafras** (~8 coins) → `orphane_pafras_task01_dry_run_billing_summary.png`
+## T1 — Dry run, billing only, **Pafras** (~8 coins) → `diapers_pafras_task01_dry_run_billing_summary.png`
 ```
 Mode: CVE Autopilot. Dry run on ONE service only to test the playbook.
 Advisory: acme-platform/security/advisory-2026-09.pdf. Only handle the billing service (PyYAML).
@@ -93,7 +93,7 @@ After: apply the suggested edit to mode M by hand (no coins). `git checkout -- a
 
 ---
 
-## T2 — Full run, all services in parallel, **Pafras** (~12 coins) → `orphane_pafras_task02_full_parallel_run_summary.png`
+## T2 — Full run, all services in parallel, **Pafras** (~12 coins) → `diapers_pafras_task02_full_parallel_run_summary.png`
 Start in **Plan mode**. Approve the plan, then let Bob switch to Agent mode.
 ```
 Mode: CVE Autopilot. Remediate acme-platform/security/advisory-2026-09.pdf end to end.
@@ -110,14 +110,14 @@ Must print nothing (tests untouched). Then run pytest in each service yourself a
 
 ---
 
-## T3 — Clean re-run for the video, **Pafras** (~8 coins, only if T2 was messy) → `orphane_pafras_task03_demo_run_summary.png`
+## T3 — Clean re-run for the video, **Pafras** (~8 coins, only if T2 was messy) → `diapers_pafras_task03_demo_run_summary.png`
 Reset to baseline, start screen recording, paste T2 unchanged. Skip T3 if T2 was clean and recorded.
 On video, make sure these are visible: PDF being read, Plan → Agent switch, 3 subagents running,
 a rollback (if one happens), the SLA dashboard at the end.
 
 ---
 
-## T4 — Streamlit app, **Dyan** (~4 coins) → `orphane_dyan_task01_streamlit_app_summary.png`
+## T4 — Streamlit app, **Dyan** (~4 coins) → `diapers_dyan_task01_streamlit_app_summary.png`
 Run on `main` early; T2's output arrives later, so the app must handle missing files.
 ```
 Build a small Streamlit app for CVE Autopilot results. PRD.md requirement R10.
@@ -137,7 +137,7 @@ Then push to main and deploy on Streamlit Community Cloud (no Bob). After T2 is 
 
 ---
 
-## E1 — Architecture diagram + README, **Erin** (~3 coins) → `orphane_erin_task01_architecture_readme_summary.png`
+## E1 — Architecture diagram + README, **Erin** (~3 coins) → `diapers_erin_task01_architecture_readme_summary.png`
 Ask mode is enough for reading; Agent mode to save files.
 ```
 Read PRD.md and BOB_PROMPTS.md (mode M). Do two things:
@@ -151,7 +151,7 @@ Read PRD.md and BOB_PROMPTS.md (mode M). Do two things:
 Do not change any other file.
 ```
 
-## E2 — Bob code review of the remediation, **Erin** (~4 coins) → `orphane_erin_task02_code_review_summary.png`
+## E2 — Bob code review of the remediation, **Erin** (~4 coins) → `diapers_erin_task02_code_review_summary.png`
 After Pafras pushes branch `autopilot/advisory-2026-09`. Use Bob's built-in **Review** workflow on the branch diff vs main.
 ```
 Review the diff of branch autopilot/advisory-2026-09 against main as a security reviewer.
@@ -184,7 +184,7 @@ Code fixes on branch autopilot/advisory-2026-09 are done and tests pass. Only do
 ## Coin log
 | Member | Task | Coins used | Running total | Notes |
 |---|---|---|---|---|
-| Pafras | T1 | | | |
+| Pafras | T1 | 1.49 | 1.49 | Dry run billing OK; amendments in .bob/rules-cve-autopilot/ |
 | Pafras | T2 | | | |
 | Pafras | T3 | | | |
 | Dyan | T4 | | | |
