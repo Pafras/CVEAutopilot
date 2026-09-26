@@ -1,0 +1,42 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>CVE Autopilot Cover</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;width:1920px;height:1080px;background:#0F1624;color:#F4F6F8;font-family:'IBM Plex Sans',Arial,sans-serif;overflow:hidden}
+  .bar{position:absolute;left:0;top:0;width:24px;height:1080px;background:#4589FF}
+  .glow{position:absolute;right:-200px;top:-200px;width:1000px;height:1000px;background:radial-gradient(circle,rgba(69,137,255,.25),rgba(15,22,36,0) 65%)}
+  .left{position:absolute;left:128px;top:0;height:1080px;width:880px;display:flex;flex-direction:column;justify-content:center;gap:32px}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:28px;color:#78A9FF;letter-spacing:2px}
+  h1{margin:0;font-size:150px;line-height:1;font-weight:700;letter-spacing:-4px}
+  .tag{font-size:48px;color:#C6CFDB;line-height:1.25}
+  .badge{align-self:flex-start;margin-top:24px;font-size:28px;font-weight:700;padding:14px 28px;border:2px solid #4589FF;border-radius:999px;color:#DCE7FF}
+  .term{position:absolute;right:128px;top:50%;transform:translateY(-50%);width:760px;background:#161F31;border:1px solid #2A3650;border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.45);font-family:'JetBrains Mono',monospace;font-size:26px;line-height:1.7}
+  .dots{display:flex;gap:12px;padding:22px 28px;border-bottom:1px solid #2A3650}
+  .dots i{width:16px;height:16px;border-radius:50%;background:#3A4760;display:block}
+  .body{padding:28px 36px 36px}
+  .dim{color:#8D99AB}.red{color:#FF8389}.green{color:#6FDC8C}.blue{color:#78A9FF}
+</style></head>
+<body>
+  <div class="glow"></div><div class="bar"></div>
+  <div class="left">
+    <div class="eyebrow">IBM BOB 2.0 HACKATHON</div>
+    <h1>CVE<br>Autopilot</h1>
+    <div class="tag">Security advisory in.<br>Tested fix out.</div>
+    <div class="badge">Built with IBM Bob 2.0 · Team Orphane</div>
+  </div>
+  <div class="term">
+    <div class="dots"><i></i><i></i><i></i></div>
+    <div class="body">
+      <div class="blue">$ bob run cve-autopilot</div>
+      <div class="dim">reading advisory-2026-09 ... 4 CVEs</div>
+      <div class="dim">spawning 3 subagents in parallel</div>
+      <div><span class="red">✗</span> billing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TypeError</div>
+      <div><span class="red">✗</span> notifications ImportError</div>
+      <div class="dim">fixing breaking changes ...</div>
+      <div><span class="green">✓</span> billing&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">passed</span></div>
+      <div><span class="green">✓</span> notifications <span class="green">passed</span></div>
+      <div><span class="green">✓</span> inventory&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="green">passed</span></div>
+      <div class="blue">→ PR ready for review</div>
+    </div>
+  </div>
+</body></html>

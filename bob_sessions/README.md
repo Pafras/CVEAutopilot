@@ -1,13 +1,15 @@
 # bob_sessions
 
-IBM Bob evidence for CVE Autopilot by Team Orphane (required for hackathon submission).
+IBM Bob task session summary screenshots for CVE Autopilot by Team Orphane (required for submission).
 
-One folder per team member, each holding that member's screenshots of IBM Bob task session summaries
-plus any exported session reports:
+How to capture (from the hackathon guide): Bob IDE chat → **Tasks** → open the task → click the
+**task header** → screenshot the task session consumption summary. Save as PNG.
 
-- `bob_sessions/pafras/`
-- `bob_sessions/erin/`
-- `bob_sessions/dyan/`
+File name: `orphane_<member>_task<NN>_<short-description>_summary.png`, e.g.
 
-Name files by order and task, e.g. `01-plan-remediation.png`, `02-billing-subagent.png`.
+- `orphane_pafras_task01_plan_remediation_summary.png`
+- `orphane_erin_task01_test_runner_summary.png`
+- `orphane_dyan_task01_streamlit_app_summary.png`
+
+Every member uploads screenshots of all their tasks for this project.
 Before adding a file, check it shows no API keys, passwords or tokens.
