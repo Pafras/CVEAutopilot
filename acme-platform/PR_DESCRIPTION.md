@@ -2,7 +2,7 @@
 
 ## Summary
 
-Automated remediation of 3 services across 7 CVEs (1 Critical, 6 Medium) from
+Automated remediation of 3 services across 9 CVEs (1 Critical, 8 Medium) from
 ACME Security Scan Report — September 2026, executed by **IBM Bob CVE Autopilot**.
 
 Branch: `autopilot/advisory-2026-09`  
