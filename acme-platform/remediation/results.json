@@ -1,55 +1,106 @@
-[
-  {
-    "service": "billing",
-    "package": "PyYAML",
-    "cves": ["CVE-2020-14343"],
-    "severity": "CRITICAL",
-    "old": "5.3.1",
-    "new": "6.0.3",
-    "baseline": "2 passed, 1 warning in 0.03s",
-    "after": "2 passed in 0.02s",
-    "risk": "breaking fix",
-    "files": [
-      "services/billing/requirements.txt",
-      "services/billing/config_loader.py"
-    ],
-    "deadline_hours": 24,
-    "fixed_at": "2026-09-26T07:30:11Z",
-    "minutes_to_fix": 3.5
-  },
-  {
-    "service": "notifications",
-    "package": "Jinja2",
-    "cves": ["CVE-2024-22195", "CVE-2024-34064", "CVE-2025-27516", "CVE-2024-56326"],
-    "severity": "MEDIUM",
-    "old": "2.11.3",
-    "new": "3.1.6",
-    "baseline": "2 passed in 0.42s",
-    "after": "2 passed in 0.02s",
-    "risk": "breaking fix",
-    "files": [
-      "services/notifications/requirements.txt",
-      "services/notifications/renderer.py"
-    ],
-    "deadline_hours": 336,
-    "fixed_at": "2026-09-26T07:30:13Z",
-    "minutes_to_fix": 3.5
-  },
-  {
-    "service": "inventory",
-    "package": "requests",
-    "cves": ["CVE-2023-32681", "CVE-2024-35195", "CVE-2024-47081", "CVE-2026-25645"],
-    "severity": "MEDIUM",
-    "old": "2.25.1",
-    "new": "2.32.5",
-    "baseline": "2 passed in 0.05s",
-    "after": "2 passed in 0.08s",
-    "risk": "safe bump",
-    "files": [
-      "services/inventory/requirements.txt"
-    ],
-    "deadline_hours": 336,
-    "fixed_at": "2026-09-26T07:29:05Z",
-    "minutes_to_fix": 2.4
+{
+  "findings": [
+    {
+      "service": "billing",
+      "package": "PyYAML",
+      "cves": ["CVE-2020-14343"],
+      "severity": "CRITICAL",
+      "old": "5.3.1",
+      "new": "6.0.3",
+      "baseline": "2 passed, 1 warning in 0.03s",
+      "after": "2 passed in 0.02s",
+      "risk": "breaking fix",
+      "files": [
+        "services/billing/requirements.txt",
+        "services/billing/config_loader.py"
+      ],
+      "deadline_hours": 24,
+      "fixed_at": "2026-09-26T07:30:11Z",
+      "minutes_to_fix": 3.5
+    },
+    {
+      "service": "notifications",
+      "package": "Jinja2",
+      "cves": ["CVE-2024-22195", "CVE-2024-34064", "CVE-2025-27516", "CVE-2024-56326"],
+      "severity": "MEDIUM",
+      "old": "2.11.3",
+      "new": "3.1.6",
+      "baseline": "2 passed in 0.42s",
+      "after": "2 passed in 0.02s",
+      "risk": "breaking fix",
+      "files": [
+        "services/notifications/requirements.txt",
+        "services/notifications/renderer.py"
+      ],
+      "deadline_hours": 336,
+      "fixed_at": "2026-09-26T07:30:13Z",
+      "minutes_to_fix": 3.5
+    },
+    {
+      "service": "inventory",
+      "package": "requests",
+      "cves": ["CVE-2023-32681", "CVE-2024-35195", "CVE-2024-47081", "CVE-2026-25645"],
+      "severity": "MEDIUM",
+      "old": "2.25.1",
+      "new": "2.32.5",
+      "baseline": "2 passed in 0.05s",
+      "after": "2 passed in 0.08s",
+      "risk": "safe bump",
+      "files": [
+        "services/inventory/requirements.txt"
+      ],
+      "deadline_hours": 336,
+      "fixed_at": "2026-09-26T07:29:05Z",
+      "minutes_to_fix": 2.4
+    },
+    {
+      "_comment": "Re-scan findings — outside advisory scope, escalated",
+      "service": "inventory",
+      "package": "requests + urllib3",
+      "cves": ["CVE-2026-25645", "CVE-2026-44432", "CVE-2026-44431"],
+      "pysec_ids": ["PYSEC-2026-2275", "PYSEC-2026-142", "PYSEC-2026-141"],
+      "severity": "MEDIUM",
+      "old": "requests==2.32.5, urllib3==2.6.3",
+      "new": "escalated — fix requires Python >= 3.10 (service runs 3.9)",
+      "baseline": "n/a (re-scan finding)",
+      "after": "n/a",
+      "risk": "escalated",
+      "files": [],
+      "deadline_hours": null,
+      "fixed_at": null,
+      "minutes_to_fix": null
+    }
+  ],
+  "scorecard": {
+    "advisory_scope": {
+      "cves_found": 9,
+      "cves_closed": 9,
+      "remediation_rate_pct": 100,
+      "verified_by_rescan": true,
+      "auto_fixed_services": 3,
+      "escalated_services": 0,
+      "breaking_changes_repaired": 2,
+      "tests_changed": 0,
+      "sla_compliant_cves": 9,
+      "sla_compliance_rate_pct": 100,
+      "total_time_seconds": 269,
+      "time_per_cve_seconds": 29.9,
+      "bobcoins_total": 3.84,
+      "bobcoins_per_cve": 0.43
+    },
+    "rescan_findings": {
+      "new_cves_found": 3,
+      "new_cves_closed": 0,
+      "remediation_rate_pct": 0,
+      "escalated_services": 1,
+      "escalation_reason": "Fix versions (requests 2.33.0, urllib3 2.7.0) require Python >= 3.10; inventory runs Python 3.9",
+      "affected_service": "inventory",
+      "cves": [
+        {"id": "CVE-2026-25645", "pysec": "PYSEC-2026-2275", "package": "requests", "fix": "2.33.0"},
+        {"id": "CVE-2026-44432", "pysec": "PYSEC-2026-142",  "package": "urllib3",  "fix": "2.7.0"},
+        {"id": "CVE-2026-44431", "pysec": "PYSEC-2026-141",  "package": "urllib3",  "fix": "2.7.0"}
+      ],
+      "action_required": "Upgrade inventory runtime to Python 3.10+, then bump requests to 2.33.0 and urllib3 to 2.7.0"
+    }
   }
-]
+}
