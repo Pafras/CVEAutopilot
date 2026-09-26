@@ -190,6 +190,6 @@ Code fixes on branch autopilot/advisory-2026-09 are done and tests pass. Only do
 | Pafras | T2 | 3.84 | 5.33 | Full run: 3 parallel subagents, 9 CVEs, R1-R9 pass, 4m29s |
 | Pafras | PR | 0.07 | 5.41 | /create-pull-request → PR #5 |
 | Pafras | T3 | | | |
-| Dyan | T4 | | | |
+| Dyan | T4 (#6) | 3.32 | 3.40 | Task summary shows 3.32; Settings > General shows account Usage 3.40 (26 Sep 2026). Viewer: 41 lines, four AppTest scenarios passed; local health checked. Screenshot: `bob_sessions/diapers_dyan_task01_streamlit_app_summary.png`. No Git commands, commit, push, or deploy. |
 | Erin | E1 | | | |
 | Erin | E2 | | | |
