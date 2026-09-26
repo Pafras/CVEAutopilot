@@ -144,24 +144,24 @@
     <h2>📊 Scorecard — Advisory scope (T2)</h2>
     <div class="sc-grid">
 
-      <div class="sc-tile ok">
+      <div class="sc-tile warn">
         <div class="sc-label">Remediation rate</div>
-        <div class="sc-value">100%</div>
-        <div class="sc-bar-track"><div class="sc-bar-fill sc-bar-green" style="width:100%"></div></div>
-        <div class="sc-sub">9 closed / 9 found</div>
+        <div class="sc-value">89%</div>
+        <div class="sc-bar-track"><div class="sc-bar-fill sc-bar-green" style="width:89%"></div></div>
+        <div class="sc-sub">8 closed / 9 found · CVE-2026-25645 escalated</div>
       </div>
 
       <div class="sc-tile ok">
         <div class="sc-label">Verified by re-scan</div>
         <div class="sc-value">Yes ✅</div>
-        <div class="sc-sub">billing · notifications · inventory — 0 advisory CVEs remain</div>
+        <div class="sc-sub">confirmed 8 closed · caught 1 still open (requests 2.32.5 does not fix CVE-2026-25645)</div>
       </div>
 
       <div class="sc-tile ok">
         <div class="sc-label">SLA compliance</div>
         <div class="sc-value">100%</div>
         <div class="sc-bar-track"><div class="sc-bar-fill sc-bar-green" style="width:100%"></div></div>
-        <div class="sc-sub">9 / 9 inside policy window</div>
+        <div class="sc-sub">8 / 8 closed inside policy window · 1 open, deadline 2026-10-10</div>
       </div>
 
       <div class="sc-tile ok">
@@ -172,8 +172,8 @@
 
       <div class="sc-tile ok">
         <div class="sc-label">Escalated (advisory)</div>
-        <div class="sc-value">0</div>
-        <div class="sc-sub">all advisory CVEs resolved</div>
+        <div class="sc-value">1</div>
+        <div class="sc-sub">inventory · CVE-2026-25645 needs Python ≥ 3.10</div>
       </div>
 
       <div class="sc-tile ok">
@@ -190,14 +190,14 @@
 
       <div class="sc-tile ok">
         <div class="sc-label">Time per CVE</div>
-        <div class="sc-value">~30 s</div>
-        <div class="sc-sub">269 s total ÷ 9 closed</div>
+        <div class="sc-value">~34 s</div>
+        <div class="sc-sub">269 s total ÷ 8 closed</div>
       </div>
 
       <div class="sc-tile ok">
         <div class="sc-label">Bobcoins per CVE</div>
-        <div class="sc-value">0.43 🪙</div>
-        <div class="sc-sub">3.84 total ÷ 9 closed</div>
+        <div class="sc-value">0.48 🪙</div>
+        <div class="sc-sub">3.84 total ÷ 8 closed</div>
       </div>
 
     </div>
@@ -205,13 +205,13 @@
 
   <!-- ── Scope 2: Re-scan findings (outside advisory) ──────────── -->
   <div class="scorecard-scope">
-    <h2>🔍 Scorecard — Re-scan findings (new, outside advisory)</h2>
+    <h2>🔍 Scorecard — Remaining after re-scan (1 advisory + 2 new)</h2>
     <div class="sc-grid">
 
       <div class="sc-tile bad">
-        <div class="sc-label">New CVEs found</div>
+        <div class="sc-label">Open CVEs</div>
         <div class="sc-value">3</div>
-        <div class="sc-sub">inventory only · 0 closed</div>
+        <div class="sc-sub">inventory · 1 from advisory, 2 new (urllib3) · 0 closed</div>
       </div>
 
       <div class="sc-tile bad">
@@ -237,7 +237,7 @@
 
     <div class="sc-notice">
       <strong>⚠ Escalation required — inventory service (3 CVEs, Python version blocker)</strong><br>
-      Re-scan found 3 vulnerabilities in inventory that have published fixes, but the fixes require
+      Re-scan found 3 open vulnerabilities in inventory (1 advisory CVE that the 2.32.5 target does not fix, 2 new) that have published fixes, but the fixes require
       <strong>Python ≥ 3.10</strong>. inventory currently runs <strong>Python 3.9</strong>.<br>
       <br>
       <code>PYSEC-2026-2275 / CVE-2026-25645</code> — requests, fix: 2.33.0 (requires Py ≥ 3.10)<br>
@@ -259,7 +259,7 @@
 
 <header>
   <h1>🛡️ Patch SLA Evidence — advisory-2026-09</h1>
-  <p>ACME Security Scan Report · September 2026 · 3 services · 9 CVEs remediated</p>
+  <p>ACME Security Scan Report · September 2026 · 3 services · 8 of 9 CVEs remediated, 1 escalated</p>
 </header>
 
 <!-- ── CRITICAL: billing ──────────────────────────────────────────── -->
@@ -368,8 +368,8 @@
     </div>
 
     <div class="status-row">
-      <div class="dot dot-green"></div>
-      <span class="status-label status-green">✅ Inside SLA</span>
+      <div class="dot dot-amber"></div>
+      <span class="status-label status-amber">⚠ 3 of 4 fixed · CVE-2026-25645 escalated (still inside SLA)</span>
     </div>
 
     <div class="cves">
@@ -442,7 +442,7 @@
   <p style="font-size:.8rem;color:var(--muted);margin-top:.75rem;">
     Bar is not to scale — our total remediation time (4 min 29 s) is <strong style="color:#22d3ee;">0.007%</strong>
     of the 43-day (61,920 min) industry median from the Verizon DBIR 2026.
-    All 9 CVEs fixed well inside policy windows (24 h / 14 days).
+    8 of 9 CVEs fixed well inside policy windows (24 h / 14 days); CVE-2026-25645 escalated, deadline 2026-10-10.
   </p>
 </div>
 

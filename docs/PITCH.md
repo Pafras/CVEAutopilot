@@ -60,7 +60,9 @@ Line for the video: "Teams take 43 days to patch vulnerabilities attackers are a
 ## Real results from the T2 run (use these numbers)
 Source: `docs/REMEDIATION.md`, `acme-platform/remediation/results.json`, PR #5.
 - **4 min 29 s** total, advisory to tested fix, 3 affected services fixed **in parallel** by 3 Bob subagents
-- **9 CVEs** closed (1 Critical, 8 Medium); pip-audit found CVEs the advisory PDF missed (e.g. Jinja2 CVE-2025-27516, CVE-2024-56326)
+- **8 of 9 CVEs** closed (1 Critical, 7 Medium); pip-audit found CVEs the advisory PDF missed (e.g. Jinja2 CVE-2025-27516, CVE-2024-56326)
+- Post-fix re-scan caught the 9th: requests 2.32.5 does not fix CVE-2026-25645 (fix 2.33.0 needs Python ≥ 3.10) → escalated to a human, not forced. Re-scan also found 2 new urllib3 CVEs (escalated). None of the 11 is in CISA KEV.
+- SBOM: 16 known vulnerabilities before, 3 after (all escalated, all "present but not reachable")
 - Critical PyYAML CVE fixed in **3 min 28 s** vs a 24 h policy window (0.24% of the window used)
 - Plain bump broke 2 of 3 services (`TypeError`, `ImportError`); Autopilot showed each failure, fixed it, all 6 tests green
 - 0 tests changed, unaffected `auth` service untouched

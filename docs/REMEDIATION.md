@@ -12,7 +12,7 @@ Scan started: 2026-09-26 07:26:43 UTC · Completed: 2026-09-26 07:31:12 UTC
 | 1 | billing | PyYAML | 5.3.1 → 6.0.3 | CVE-2020-14343 | CRITICAL | breaking fix | 24 h | ✅ Fixed |
 | 2 | notifications | Jinja2 | 2.11.3 → 3.1.6 | CVE-2024-22195, CVE-2024-34064, CVE-2025-27516, CVE-2024-56326 | MEDIUM | breaking fix | 14 days | ✅ Fixed |
 | 2b | notifications | MarkupSafe | 2.0.1 → 3.0.3 | (dependency of Jinja2 3.x) | MEDIUM | safe bump | 14 days | ✅ Fixed |
-| 3 | inventory | requests | 2.25.1 → 2.32.5 | CVE-2023-32681, CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 | MEDIUM | safe bump | 14 days | ✅ Fixed |
+| 3 | inventory | requests | 2.25.1 → 2.32.5 | CVE-2023-32681, CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 | MEDIUM | safe bump | 14 days | ⚠️ 3 of 4 fixed — CVE-2026-25645 escalated (fix needs requests 2.33.0 / Python ≥ 3.10) |
 | — | auth | — | — | — | — | — | — | ✅ Not affected, no change |
 
 
@@ -41,9 +41,9 @@ Scan started: 2026-09-26 07:26:43 UTC · Completed: 2026-09-26 07:31:12 UTC
 
 ### 1. billing — PyYAML 5.3.1 → 6.0.3 [CRITICAL]
 
-**CVE:** CVE-2020-14343 (GHSA-8q59-q68h-6hv4, PYSEC-2021-142)
-**CVSS:** 9.8 Critical
-**Description:** Arbitrary code execution via `yaml.load()` with `FullLoader` on untrusted input.
+**CVE:** CVE-2020-14343 (GHSA-8q59-q68h-6hv4, PYSEC-2021-142)  
+**CVSS:** 9.8 Critical  
+**Description:** Arbitrary code execution via `yaml.load()` with `FullLoader` on untrusted input.  
 **Policy deadline:** 24 hours from detection.
 
 **KEV & Reachability:**
@@ -70,10 +70,10 @@ TypeError: load() missing 1 required positional argument: 'Loader'
 
 ### 2. notifications — Jinja2 2.11.3 → 3.1.6 / MarkupSafe 2.0.1 → 3.0.3 [MEDIUM]
 
-**CVEs:** CVE-2024-22195 (GHSA-h5c8-rqwp-cp95), CVE-2024-34064 (GHSA-h75v-3vvj-5mfj),
-         CVE-2025-27516 (scan-only), CVE-2024-56326 (scan-only)
-**CVSS:** 5.4 Medium (XSS via xmlattr filter)
-**Description:** `xmlattr` filter accepts keys with spaces/special chars enabling HTML attribute injection.
+**CVEs:** CVE-2024-22195 (GHSA-h5c8-rqwp-cp95), CVE-2024-34064 (GHSA-h75v-3vvj-5mfj),  
+         CVE-2025-27516 (scan-only), CVE-2024-56326 (scan-only)  
+**CVSS:** 5.4 Medium (XSS via xmlattr filter)  
+**Description:** `xmlattr` filter accepts keys with spaces/special chars enabling HTML attribute injection.  
 **Policy deadline:** 14 days from detection.
 
 **KEV & Reachability:**
@@ -100,9 +100,9 @@ ImportError: cannot import name 'Markup' from 'jinja2'
 
 ### 3. inventory — requests 2.25.1 → 2.32.5 [MEDIUM]
 
-**CVEs:** CVE-2023-32681 (GHSA-j8r2-6x86-q33q), CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 (scan-only)
-**CVSS:** 6.1 Medium (Proxy-Authorization header leak on HTTPS redirect)
-**Description:** `Proxy-Authorization` header leaked to destination server on HTTPS redirects.
+**CVEs:** CVE-2023-32681 (GHSA-j8r2-6x86-q33q), CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 (scan-only)  
+**CVSS:** 6.1 Medium (Proxy-Authorization header leak on HTTPS redirect)  
+**Description:** `Proxy-Authorization` header leaked to destination server on HTTPS redirects.  
 **Policy deadline:** 14 days from detection.
 
 **KEV & Reachability (per CVE):**
