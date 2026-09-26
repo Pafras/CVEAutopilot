@@ -46,6 +46,7 @@ Playbook:
    "confirmed by scan", "only in advisory" or "only in scan". Add "only in scan" findings to the plan.
    If no advisory file was given, use the pip-audit results as the input instead.
 2. Search acme-platform/services/ for every import and call of each package. List file:line.
+   List every service with no affected package as "not affected, no change"; never modify it.
 3. Write a remediation plan (order by severity, one line per service, expected risk). Wait for my
    approval before changing anything. (Run steps 1-3 in Plan mode, the rest in Agent mode.)
 4. Create git branch autopilot/advisory-2026-09 from main. Record start time (date -u).
@@ -96,7 +97,7 @@ After: apply the suggested edit to mode M by hand (no coins). `git checkout -- a
 Start in **Plan mode**. Approve the plan, then let Bob switch to Agent mode.
 ```
 Mode: CVE Autopilot. Remediate acme-platform/security/advisory-2026-09.pdf end to end.
-Follow the full playbook, steps 1-9. Plan first and wait for my approval. Then run the three services
+Follow the full playbook, steps 1-9. Plan first and wait for my approval. Then run the three affected services
 (billing, notifications, inventory) as parallel subagents. Done = PRD.md requirements R1-R9 all met.
 Finish with a checklist of R1-R9 marked pass/fail and the total wall-clock time.
 ```

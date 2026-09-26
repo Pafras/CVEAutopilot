@@ -37,7 +37,7 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 ## 4. Scope
 **In**
 - Input: advisory PDF at `acme-platform/security/advisory-2026-09.pdf` (markdown copy alongside for GitHub readers).
-- Target: `acme-platform/` (3 Python services, pytest).
+- Target: `acme-platform/` (4 Python services, pytest). 3 are affected; `auth` is not and must stay unchanged.
 - Bob **custom mode** "CVE Autopilot", playbook packaged as a **Bob Skill** if supported (see BOB_PROMPTS.md).
 - Bob features shown on screen: **Plan mode → Agent mode**, **document understanding** (PDF),
   **parallel subagents**, **rollback** of failed fix attempts, **HTML report**.
@@ -84,7 +84,7 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 ## 7. Success metrics (for the pitch)
 - **Time:** manual estimate (triage + 3 upgrades + 2 breaking fixes + tests + PR ≈ 4–8 h) vs Autopilot wall-clock minutes. Measured on the real run.
 - **SLA:** Critical fixed well inside its 24h policy window, against a 43-day industry median.
-- **Correctness:** 3/3 services green, 4/4 CVEs closed, 0 tests weakened.
+- **Correctness:** 3/3 affected services green, 4/4 CVEs closed, 0 tests weakened, unaffected `auth` left untouched.
 - **Effort:** developer actions needed = 1 prompt + 1 plan approval + 1 review.
 
 ## 8. Competition
