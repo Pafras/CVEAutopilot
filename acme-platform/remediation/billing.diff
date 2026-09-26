@@ -1,0 +1,20 @@
+diff --git a/acme-platform/services/billing/config_loader.py b/acme-platform/services/billing/config_loader.py
+index 4765203..b2ffff6 100644
+--- a/acme-platform/services/billing/config_loader.py
++++ b/acme-platform/services/billing/config_loader.py
+@@ -3,7 +3,7 @@ import yaml
+ 
+ def load_invoice_rules(path):
+     with open(path) as f:
+-        return yaml.load(f)
++        return yaml.load(f, Loader=yaml.SafeLoader)
+ 
+ 
+ def load_tax_table(text):
+diff --git a/acme-platform/services/billing/requirements.txt b/acme-platform/services/billing/requirements.txt
+index 7a997b5..f62ce0c 100644
+--- a/acme-platform/services/billing/requirements.txt
++++ b/acme-platform/services/billing/requirements.txt
+@@ -1 +1 @@
+-PyYAML==5.3.1
++PyYAML==6.0.3

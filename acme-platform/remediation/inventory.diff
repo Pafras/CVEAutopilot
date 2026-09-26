@@ -1,0 +1,7 @@
+diff --git a/acme-platform/services/inventory/requirements.txt b/acme-platform/services/inventory/requirements.txt
+index 9d84d35..727711c 100644
+--- a/acme-platform/services/inventory/requirements.txt
++++ b/acme-platform/services/inventory/requirements.txt
+@@ -1 +1 @@
+-requests==2.25.1
++requests==2.32.5

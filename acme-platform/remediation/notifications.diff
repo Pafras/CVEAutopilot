@@ -1,0 +1,20 @@
+diff --git a/acme-platform/services/notifications/renderer.py b/acme-platform/services/notifications/renderer.py
+index 3378c28..b0d4bd2 100644
+--- a/acme-platform/services/notifications/renderer.py
++++ b/acme-platform/services/notifications/renderer.py
+@@ -1,4 +1,5 @@
+-from jinja2 import Environment, Markup, escape
++from jinja2 import Environment
++from markupsafe import Markup, escape
+ 
+ env = Environment(autoescape=True)
+ 
+diff --git a/acme-platform/services/notifications/requirements.txt b/acme-platform/services/notifications/requirements.txt
+index 9fefac8..6226544 100644
+--- a/acme-platform/services/notifications/requirements.txt
++++ b/acme-platform/services/notifications/requirements.txt
+@@ -1,2 +1,2 @@
+-Jinja2==2.11.3
+-MarkupSafe==2.0.1
++Jinja2==3.1.6
++MarkupSafe==3.0.3
