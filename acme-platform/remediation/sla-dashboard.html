@@ -65,6 +65,26 @@
   .risk-safe    { background: #14532d; color: #86efac; }
   .risk-breaking { background: #450a0a; color: #fca5a5; }
 
+  /* KEV & reachability */
+  .kev-row { display: flex; align-items: flex-start; gap: .5rem; flex-wrap: wrap; margin-top: -.15rem; }
+  .badge-kev  { font-size: .72rem; font-weight: 700; padding: .2rem .55rem; border-radius: 999px;
+                background: #450a0a; color: #fca5a5; border: 1px solid #dc2626;
+                text-transform: uppercase; letter-spacing: .04em; }
+  .badge-kev-none { font-size: .72rem; color: var(--muted); padding: .2rem 0; }
+  .reach-reachable        { font-size: .75rem; color: #fcd34d; font-weight: 600; }
+  .reach-not-reachable    { font-size: .75rem; color: var(--muted); }
+  .reach-unknown          { font-size: .75rem; color: var(--muted); font-style: italic; }
+  .reach-evidence         { font-size: .7rem; color: var(--muted); font-family: monospace;
+                            margin-top: .1rem; line-height: 1.4; }
+  .per-cve-table { width: 100%; border-collapse: collapse; font-size: .75rem; margin-top: .25rem; }
+  .per-cve-table th { text-align: left; color: var(--muted); font-weight: 600;
+                      font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
+                      padding-bottom: .3rem; border-bottom: 1px solid var(--border); }
+  .per-cve-table td { padding: .25rem 0; vertical-align: top; color: var(--text); }
+  .per-cve-table td:first-child { font-family: monospace; color: #93c5fd; padding-right: .5rem; white-space: nowrap; }
+  .per-cve-table td.reach-reachable     { color: #fcd34d; font-weight: 600; }
+  .per-cve-table td.reach-not-reachable { color: var(--muted); }
+
   /* Industry bar */
   .bar-section { max-width: 960px; margin: 2rem auto; background: var(--card);
                  border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
@@ -224,6 +244,12 @@
       <code>PYSEC-2026-142 / CVE-2026-44432</code> — urllib3, fix: 2.7.0 (requires Py ≥ 3.10)<br>
       <code>PYSEC-2026-141 / CVE-2026-44431</code> — urllib3, fix: 2.7.0 (requires Py ≥ 3.10)<br>
       <br>
+      <strong>KEV status:</strong> none of the 3 CVEs are listed in CISA KEV (catalog 2026.09.25).<br>
+      <strong>Reachability:</strong>
+      <span style="color:#94a3b8;">○ CVE-2026-25645 — present, not reachable</span> (no extract_zipped_paths call) ·
+      <span style="color:#94a3b8;">○ CVE-2026-44432 — present, not reachable</span> (no streaming read(amt=N)) ·
+      <span style="color:#94a3b8;">○ CVE-2026-44431 — present, not reachable</span> (no direct urllib3.ProxyManager)<br>
+      <br>
       <strong>Action required:</strong> upgrade inventory runtime to Python 3.10+, then bump
       requests to 2.33.0 and urllib3 to 2.7.0.
     </div>
@@ -255,6 +281,14 @@
 
     <div class="cves">
       <span class="cve-pill">CVE-2020-14343</span>
+    </div>
+
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <div>
+      <span class="reach-reachable">⚠ Reachable</span>
+      <div class="reach-evidence">config_loader.py:6 — yaml.load(f) with no Loader received a file path from the caller; attacker-controlled YAML can execute arbitrary code. (Fixed: SafeLoader added.)</div>
     </div>
 
     <table class="info">
@@ -297,6 +331,14 @@
       <span class="cve-pill">CVE-2024-56326</span>
     </div>
 
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <div>
+      <span class="reach-reachable">⚠ Reachable</span>
+      <div class="reach-evidence">renderer.py:6 — {{ attrs|xmlattr }} in BADGE template; attrs is passed from the caller of render_badge(), allowing untrusted keys to inject HTML attributes.</div>
+    </div>
+
     <table class="info">
       <tr><td>Policy deadline</td><td>14 days (336 h)</td></tr>
       <tr><td>Time to fix</td><td>~3 min 30 s</td></tr>
@@ -336,6 +378,33 @@
       <span class="cve-pill">CVE-2024-47081</span>
       <span class="cve-pill">CVE-2026-25645</span>
     </div>
+
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <table class="per-cve-table">
+      <tr><th>CVE</th><th>Reachability</th><th>Evidence</th></tr>
+      <tr>
+        <td>CVE-2023-32681</td>
+        <td class="reach-reachable">⚠ Reachable</td>
+        <td class="reach-evidence">client.py:9 — s.proxies set from caller-supplied proxy_url; Proxy-Authorization leaks to HTTPS destination on redirect</td>
+      </tr>
+      <tr>
+        <td>CVE-2024-35195</td>
+        <td class="reach-not-reachable">○ Present, not reachable</td>
+        <td class="reach-evidence">client.py:6-10 — verify never set to False on the Session</td>
+      </tr>
+      <tr>
+        <td>CVE-2024-47081</td>
+        <td class="reach-not-reachable">○ Present, not reachable</td>
+        <td class="reach-evidence">client.py:3 — URL is constant SUPPLIER_API; no user input reaches it</td>
+      </tr>
+      <tr>
+        <td>CVE-2026-25645</td>
+        <td class="reach-not-reachable">○ Present, not reachable</td>
+        <td class="reach-evidence">client.py — no call to extract_zipped_paths anywhere in service code</td>
+      </tr>
+    </table>
 
     <table class="info">
       <tr><td>Policy deadline</td><td>14 days (336 h)</td></tr>

@@ -15,16 +15,41 @@ Scan started: 2026-09-26 07:26:43 UTC · Completed: 2026-09-26 07:31:12 UTC
 | 3 | inventory | requests | 2.25.1 → 2.32.5 | CVE-2023-32681, CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 | MEDIUM | safe bump | 14 days | ✅ Fixed |
 | — | auth | — | — | — | — | — | — | ✅ Not affected, no change |
 
+
+## Exploitability Overview
+
+> CISA KEV catalog version 2026.09.25 (released 2026-09-25). Checked 2026-09-26.
+> **No CVE in this advisory is listed in CISA KEV** — none are known to be actively exploited in the wild.
+
+| CVE | Package | KEV | Reachability | Priority |
+|-----|---------|-----|--------------|----------|
+| CVE-2020-14343 | PyYAML | — not listed | ⚠ Reachable | 1 — reachable, Critical |
+| CVE-2024-22195 | Jinja2 | — not listed | ⚠ Reachable | 2 — reachable, Medium |
+| CVE-2024-34064 | Jinja2 | — not listed | ⚠ Reachable | 2 — reachable, Medium |
+| CVE-2025-27516 | Jinja2 | — not listed | ⚠ Reachable | 2 — reachable, Medium |
+| CVE-2024-56326 | Jinja2 | — not listed | ⚠ Reachable | 2 — reachable, Medium |
+| CVE-2023-32681 | requests | — not listed | ⚠ Reachable | 2 — reachable, Medium |
+| CVE-2024-35195 | requests | — not listed | ○ Present, not reachable | 3 — present, Medium |
+| CVE-2024-47081 | requests | — not listed | ○ Present, not reachable | 3 — present, Medium |
+| CVE-2026-25645 | requests | — not listed | ○ Present, not reachable | 3 — present, Medium |
+| CVE-2026-44432 | urllib3 | — not listed | ○ Present, not reachable | 3 — present, Medium (escalated) |
+| CVE-2026-44431 | urllib3 | — not listed | ○ Present, not reachable | 3 — present, Medium (escalated) |
+
 ---
 
 ## Detailed Findings
 
 ### 1. billing — PyYAML 5.3.1 → 6.0.3 [CRITICAL]
 
-**CVE:** CVE-2020-14343 (GHSA-8q59-q68h-6hv4, PYSEC-2021-142)  
-**CVSS:** 9.8 Critical  
-**Description:** Arbitrary code execution via `yaml.load()` with `FullLoader` on untrusted input.  
+**CVE:** CVE-2020-14343 (GHSA-8q59-q68h-6hv4, PYSEC-2021-142)
+**CVSS:** 9.8 Critical
+**Description:** Arbitrary code execution via `yaml.load()` with `FullLoader` on untrusted input.
 **Policy deadline:** 24 hours from detection.
+
+**KEV & Reachability:**
+- KEV status: — Not listed (not known to be actively exploited)
+- Reachability: ⚠ **Reachable**
+- Evidence: `services/billing/config_loader.py:6` — `yaml.load(f)` with no `Loader` received a file path from the caller (`load_invoice_rules`), allowing arbitrary code execution on attacker-controlled YAML content. *(Fixed: `Loader=yaml.SafeLoader` added.)*
 
 **Files changed:**
 - `services/billing/requirements.txt` — `PyYAML==5.3.1` → `PyYAML==6.0.3`
@@ -45,11 +70,16 @@ TypeError: load() missing 1 required positional argument: 'Loader'
 
 ### 2. notifications — Jinja2 2.11.3 → 3.1.6 / MarkupSafe 2.0.1 → 3.0.3 [MEDIUM]
 
-**CVEs:** CVE-2024-22195 (GHSA-h5c8-rqwp-cp95), CVE-2024-34064 (GHSA-h75v-3vvj-5mfj),  
-         CVE-2025-27516 (scan-only), CVE-2024-56326 (scan-only)  
-**CVSS:** 5.4 Medium (XSS via xmlattr filter)  
-**Description:** `xmlattr` filter accepts keys with spaces/special chars enabling HTML attribute injection.  
+**CVEs:** CVE-2024-22195 (GHSA-h5c8-rqwp-cp95), CVE-2024-34064 (GHSA-h75v-3vvj-5mfj),
+         CVE-2025-27516 (scan-only), CVE-2024-56326 (scan-only)
+**CVSS:** 5.4 Medium (XSS via xmlattr filter)
+**Description:** `xmlattr` filter accepts keys with spaces/special chars enabling HTML attribute injection.
 **Policy deadline:** 14 days from detection.
+
+**KEV & Reachability:**
+- KEV status: — Not listed (not known to be actively exploited)
+- Reachability: ⚠ **Reachable**
+- Evidence: `services/notifications/renderer.py:6` — `{{ attrs|xmlattr }}` in `BADGE` template; `attrs` is passed directly from the caller of `render_badge()`, allowing untrusted dict keys to inject HTML attributes.
 
 **Files changed:**
 - `services/notifications/requirements.txt` — `Jinja2==2.11.3` → `Jinja2==3.1.6`; `MarkupSafe==2.0.1` → `MarkupSafe==3.0.3`
@@ -70,10 +100,19 @@ ImportError: cannot import name 'Markup' from 'jinja2'
 
 ### 3. inventory — requests 2.25.1 → 2.32.5 [MEDIUM]
 
-**CVEs:** CVE-2023-32681 (GHSA-j8r2-6x86-q33q), CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 (scan-only)  
-**CVSS:** 6.1 Medium (Proxy-Authorization header leak on HTTPS redirect)  
-**Description:** `Proxy-Authorization` header leaked to destination server on HTTPS redirects.  
+**CVEs:** CVE-2023-32681 (GHSA-j8r2-6x86-q33q), CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 (scan-only)
+**CVSS:** 6.1 Medium (Proxy-Authorization header leak on HTTPS redirect)
+**Description:** `Proxy-Authorization` header leaked to destination server on HTTPS redirects.
 **Policy deadline:** 14 days from detection.
+
+**KEV & Reachability (per CVE):**
+
+| CVE | KEV | Reachability | Evidence |
+|-----|-----|--------------|---------|
+| CVE-2023-32681 | — not listed | ⚠ Reachable | `client.py:9` — `s.proxies` set from caller-supplied `proxy_url`; `Proxy-Authorization` header would leak to HTTPS destination on redirect |
+| CVE-2024-35195 | — not listed | ○ Present, not reachable | `client.py:6-10` — `verify` is never set to `False` on the Session |
+| CVE-2024-47081 | — not listed | ○ Present, not reachable | `client.py:3` — target URL is the constant `SUPPLIER_API`; no user input reaches the URL |
+| CVE-2026-25645 | — not listed | ○ Present, not reachable | `client.py` — no call to `requests.utils.extract_zipped_paths` anywhere in service code |
 
 **Files changed:**
 - `services/inventory/requirements.txt` — `requests==2.25.1` → `requests==2.32.5`
@@ -94,3 +133,20 @@ All tests passed — safe bump, no break
 ### auth — Not affected
 
 No third-party dependencies. No change required.
+
+---
+
+### Escalated re-scan findings — inventory (CVE-2026-25645, CVE-2026-44432, CVE-2026-44431)
+
+These three CVEs were found by re-scan outside the advisory scope. They cannot be auto-fixed
+because the fix versions require Python ≥ 3.10 (inventory runs 3.9).
+
+**KEV & Reachability (per CVE):**
+
+| CVE | Package | KEV | Reachability | Evidence |
+|-----|---------|-----|--------------|---------|
+| CVE-2026-25645 | requests | — not listed | ○ Present, not reachable | `client.py` — no call to `requests.utils.extract_zipped_paths` anywhere in service code |
+| CVE-2026-44432 | urllib3 | — not listed | ○ Present, not reachable | `client.py` — no streaming `read(amt=N)` calls; urllib3 decompression on partial reads is not triggered |
+| CVE-2026-44431 | urllib3 | — not listed | ○ Present, not reachable | `client.py:7` — only `requests.Session` is used; `urllib3.ProxyManager` is never instantiated directly |
+
+**Action required:** Upgrade inventory runtime to Python 3.10+, then bump `requests` to `2.33.0` and `urllib3` to `2.7.0`.

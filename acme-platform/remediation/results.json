@@ -16,7 +16,10 @@
       ],
       "deadline_hours": 24,
       "fixed_at": "2026-09-26T07:30:11Z",
-      "minutes_to_fix": 3.5
+      "minutes_to_fix": 3.5,
+      "kev_listed": false,
+      "reachability": "reachable",
+      "reachability_evidence": "services/billing/config_loader.py:6 — yaml.load(f) with no Loader receives a file path from the caller (load_invoice_rules), allowing arbitrary code execution on attacker-controlled YAML content."
     },
     {
       "service": "notifications",
@@ -34,7 +37,10 @@
       ],
       "deadline_hours": 336,
       "fixed_at": "2026-09-26T07:30:13Z",
-      "minutes_to_fix": 3.5
+      "minutes_to_fix": 3.5,
+      "kev_listed": false,
+      "reachability": "reachable",
+      "reachability_evidence": "services/notifications/renderer.py:6 — {{ attrs|xmlattr }} in BADGE template; attrs is passed directly from the caller of render_badge(), allowing untrusted keys to inject HTML attributes."
     },
     {
       "service": "inventory",
@@ -51,7 +57,33 @@
       ],
       "deadline_hours": 336,
       "fixed_at": "2026-09-26T07:29:05Z",
-      "minutes_to_fix": 2.4
+      "minutes_to_fix": 2.4,
+      "per_cve": [
+        {
+          "id": "CVE-2023-32681",
+          "kev_listed": false,
+          "reachability": "reachable",
+          "reachability_evidence": "services/inventory/client.py:9 — s.proxies is set from caller-supplied proxy_url; a Proxy-Authorization header would leak to the HTTPS destination on redirect."
+        },
+        {
+          "id": "CVE-2024-35195",
+          "kev_listed": false,
+          "reachability": "present but not reachable",
+          "reachability_evidence": "services/inventory/client.py:6-10 — verify is never set to False on the Session; the vulnerable code path is not triggered."
+        },
+        {
+          "id": "CVE-2024-47081",
+          "kev_listed": false,
+          "reachability": "present but not reachable",
+          "reachability_evidence": "services/inventory/client.py:3 — the target URL is the constant SUPPLIER_API; no user input reaches the URL, so .netrc credential leakage via a crafted URL is not possible."
+        },
+        {
+          "id": "CVE-2026-25645",
+          "kev_listed": false,
+          "reachability": "present but not reachable",
+          "reachability_evidence": "services/inventory/client.py — no call to requests.utils.extract_zipped_paths or any zip-extraction helper anywhere in service code."
+        }
+      ]
     },
     {
       "_comment": "Re-scan findings — outside advisory scope, escalated",
@@ -68,7 +100,27 @@
       "files": [],
       "deadline_hours": null,
       "fixed_at": null,
-      "minutes_to_fix": null
+      "minutes_to_fix": null,
+      "per_cve": [
+        {
+          "id": "CVE-2026-25645",
+          "kev_listed": false,
+          "reachability": "present but not reachable",
+          "reachability_evidence": "services/inventory/client.py — no call to requests.utils.extract_zipped_paths or any zip-extraction helper anywhere in service code."
+        },
+        {
+          "id": "CVE-2026-44432",
+          "kev_listed": false,
+          "reachability": "present but not reachable",
+          "reachability_evidence": "services/inventory/client.py — no streaming read(amt=N) calls; urllib3 decompression on partial reads is not triggered."
+        },
+        {
+          "id": "CVE-2026-44431",
+          "kev_listed": false,
+          "reachability": "present but not reachable",
+          "reachability_evidence": "services/inventory/client.py:7 — only requests.Session is used; urllib3.ProxyManager is never instantiated directly, so the cross-origin redirect via low-level API does not apply."
+        }
+      ]
     }
   ],
   "scorecard": {

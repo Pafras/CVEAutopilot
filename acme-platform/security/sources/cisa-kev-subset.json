@@ -1,0 +1,19 @@
+{
+  "source_url": "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+  "catalogVersion": "2026.09.25",
+  "dateReleased": "2026-09-25T18:58:16.5029Z",
+  "cves_checked": [
+    "CVE-2020-14343",
+    "CVE-2024-22195",
+    "CVE-2024-34064",
+    "CVE-2025-27516",
+    "CVE-2024-56326",
+    "CVE-2023-32681",
+    "CVE-2024-35195",
+    "CVE-2024-47081",
+    "CVE-2026-25645",
+    "CVE-2026-44432",
+    "CVE-2026-44431"
+  ],
+  "vulnerabilities": []
+}
