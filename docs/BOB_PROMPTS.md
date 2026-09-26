@@ -11,7 +11,7 @@ Budget: 40 Bobcoins PER MEMBER (3 × 40), no top-ups. Rules for every task:
 ## Who runs what (Sat 26 – Sun 27 Sep, submit by Sun 21:00 WITA, hard deadline Sun 23:00)
 | Member | Tasks | Est. coins | Output |
 |---|---|---|---|
-| **Pafras** | M setup, T1, T2, (T3) | ~20–28 | Autopilot mode, remediation branch, REMEDIATION.md, SLA dashboard, run time |
+| **Pafras** | M setup, T1, T2, (T3) | ~20–28 | Autopilot mode, remediation branch, docs/REMEDIATION.md, SLA dashboard, run time |
 | **Dyan** | T4 (start early, app tolerates missing files), deploy | ~4–8 | Streamlit URL |
 | **Erin** | E1 architecture diagram + README, E2 Bob code review of the branch; slides + video | ~6–10 | README, diagram, review notes, PDF deck, MP4 |
 
@@ -35,7 +35,9 @@ the May winner (Pedigree) was praised for. If custom modes aren't available, pas
 
 ```
 You are CVE Autopilot. You turn a security advisory into a tested fix plus patch-SLA evidence.
-Spec and acceptance criteria: PRD.md (sections 4-6). Target repo: acme-platform/.
+Spec and acceptance criteria: docs/PRD.md (sections 4-6). Target repo: acme-platform/.
+
+Before planning, read docs/01-playbook-amendments.md; its rules take precedence.
 
 Playbook:
 1. Read the advisory PDF. Output a table per finding: package, installed version, CVE IDs, severity,
@@ -62,9 +64,9 @@ Playbook:
 6. Hard rules: never delete, skip, xfail or weaken a test. Never edit files under tests/.
    Never change a public function signature or behaviour; if a fix needs that, stop and ask me.
    Never commit .venv/.
-7. Aggregate: write acme-platform/REMEDIATION.md (per CVE: service, old -> new version, files changed,
-   tests before/after, risk, time taken), append acme-platform/CHANGELOG.md, write
-   acme-platform/PR_DESCRIPTION.md. Order everything by severity, Critical first.
+7. Aggregate: write docs/REMEDIATION.md (per CVE: service, old -> new version, files changed,
+   tests before/after, risk, time taken), append docs/CHANGELOG.md, write
+   docs/PR_DESCRIPTION.md. Order everything by severity, Critical first.
 8. Save output for the viewer:
    - acme-platform/remediation/<service>.diff  (git diff main -- services/<service>)
    - acme-platform/remediation/results.json:
@@ -98,7 +100,7 @@ Start in **Plan mode**. Approve the plan, then let Bob switch to Agent mode.
 ```
 Mode: CVE Autopilot. Remediate acme-platform/security/advisory-2026-09.pdf end to end.
 Follow the full playbook, steps 1-9. Plan first and wait for my approval. Then run the three affected services
-(billing, notifications, inventory) as parallel subagents. Done = PRD.md requirements R1-R9 all met.
+(billing, notifications, inventory) as parallel subagents. Done = docs/PRD.md requirements R1-R9 all met.
 Finish with a checklist of R1-R9 marked pass/fail and the total wall-clock time.
 ```
 After, check by hand (no coins):
@@ -120,16 +122,16 @@ a rollback (if one happens), the SLA dashboard at the end.
 ## T4 — Streamlit app, **Dyan** (~4 coins) → `diapers_dyan_task01_streamlit_app_summary.png`
 Run on `main` early; T2's output arrives later, so the app must handle missing files.
 ```
-Build a small Streamlit app for CVE Autopilot results. PRD.md requirement R10.
+Build a small Streamlit app for CVE Autopilot results. docs/PRD.md requirement R10.
 - One file: app.py at repo root. requirements.txt at repo root with only streamlit (pinned).
 - Reads committed files only, no network calls, no secrets.
 - Any file below may not exist yet: show st.info("Not generated yet — run CVE Autopilot") instead of failing.
 - Tab 1 "SLA evidence": embed acme-platform/remediation/sla-dashboard.html with
   st.components.v1.html (scrolling, height ~900).
 - Tab 2 "Diffs": one expander per acme-platform/remediation/*.diff, shown with st.code(diff, "diff").
-- Tab 3 "Report": acme-platform/REMEDIATION.md via st.markdown.
+- Tab 3 "Report": docs/REMEDIATION.md via st.markdown.
 - Tab 4 "Advisory": offer acme-platform/security/advisory-2026-09.pdf with st.download_button and
-  show the markdown copy.
+  show the markdown copy at docs/advisory-2026-09.md.
 - Title "CVE Autopilot", caption "Security advisory in. Tested fix and SLA evidence out."
 - Keep it under 60 lines. Run it locally with streamlit run app.py to check it loads.
 ```
@@ -140,14 +142,14 @@ Then push to main and deploy on Streamlit Community Cloud (no Bob). After T2 is 
 ## E1 — Architecture diagram + README, **Erin** (~3 coins) → `diapers_erin_task01_architecture_readme_summary.png`
 Ask mode is enough for reading; Agent mode to save files.
 ```
-Read PRD.md and BOB_PROMPTS.md (mode M). Do two things:
+Read docs/PRD.md and docs/BOB_PROMPTS.md (mode M). Do two things:
 1. Create docs/architecture.md with one Mermaid flowchart of CVE Autopilot: advisory PDF -> Bob Plan mode
    (extract CVEs, find usages, plan) -> human approval -> Agent mode -> 3 parallel subagents
    (billing, notifications, inventory: baseline -> bump -> test -> fix -> rollback on failure -> retest)
-   -> REMEDIATION.md, CHANGELOG, PR text, SLA dashboard -> Streamlit viewer.
-2. Update README.md: add sections "How it works" (link docs/architecture.md), "Run the demo"
+   -> docs/REMEDIATION.md, CHANGELOG, PR text, SLA dashboard -> Streamlit viewer.
+2. Update docs/README.md: add sections "How it works" (link docs/architecture.md), "Run the demo"
    (open acme-platform in Bob IDE, select the CVE Autopilot mode, paste the T2 prompt), and
-   "Data sources" (copy PRD.md section 11). Keep existing sections. Plain, short English.
+   "Data sources" (copy docs/PRD.md section 11). Keep existing sections. Plain, short English.
 Do not change any other file.
 ```
 
@@ -155,9 +157,9 @@ Do not change any other file.
 After Pafras pushes branch `autopilot/advisory-2026-09`. Use Bob's built-in **Review** workflow on the branch diff vs main.
 ```
 Review the diff of branch autopilot/advisory-2026-09 against main as a security reviewer.
-Check: every CVE in acme-platform/security/advisory-2026-09.md is fixed at or above the fixed version;
+Check: every CVE in docs/advisory-2026-09.md is fixed at or above the fixed version;
 no test under acme-platform/services/*/tests was changed; code fixes are minimal and keep behaviour.
-Write findings to acme-platform/remediation/REVIEW.md (pass/fail per check, one line each). Change nothing else.
+Write findings to docs/REVIEW.md (pass/fail per check, one line each). Change nothing else.
 ```
 
 ---
@@ -184,10 +186,10 @@ Code fixes on branch autopilot/advisory-2026-09 are done and tests pass. Only do
 ## Coin log
 | Member | Task | Coins used | Running total | Notes |
 |---|---|---|---|---|
-| Pafras | T1 | 1.49 | 1.49 | Dry run billing OK; amendments in .bob/rules-cve-autopilot/ |
+| Pafras | T1 | 1.49 | 1.49 | Dry run billing OK; amendments in docs/01-playbook-amendments.md |
 | Pafras | T2 | 3.84 | 5.33 | Full run: 3 parallel subagents, 9 CVEs, R1-R9 pass, 4m29s |
 | Pafras | PR | 0.07 | 5.41 | /create-pull-request → PR #5 |
 | Pafras | T3 | | | |
-| Dyan | T4 | | | |
+| Dyan | T4 (#6) | 3.32 | 3.40 | Task summary shows 3.32; Settings > General shows account Usage 3.40 (26 Sep 2026). Viewer: 41 lines, four AppTest scenarios passed; local health checked. Screenshot: `bob_sessions/diapers_dyan_task01_streamlit_app_summary.png`. No Git commands, commit, push, or deploy. |
 | Erin | E1 | | | |
 | Erin | E2 | | | |

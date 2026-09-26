@@ -58,7 +58,7 @@ Cite these as sources on the slide. Checked 2026-09-25.
 Line for the video: "Teams take 43 days to patch vulnerabilities attackers are already using. Autopilot did ours in <Y> minutes."
 
 ## Real results from the T2 run (use these numbers)
-Source: `acme-platform/REMEDIATION.md`, `acme-platform/remediation/results.json`, PR #5.
+Source: `docs/REMEDIATION.md`, `acme-platform/remediation/results.json`, PR #5.
 - **4 min 29 s** total, advisory to tested fix, 3 affected services fixed **in parallel** by 3 Bob subagents
 - **9 CVEs** closed (1 Critical, 8 Medium); pip-audit found CVEs the advisory PDF missed (e.g. Jinja2 CVE-2025-27516, CVE-2024-56326)
 - Critical PyYAML CVE fixed in **3 min 28 s** vs a 24 h policy window (0.24% of the window used)

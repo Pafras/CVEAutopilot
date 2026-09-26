@@ -36,12 +36,12 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 
 ## 4. Scope
 **In**
-- Input: advisory PDF at `acme-platform/security/advisory-2026-09.pdf` (markdown copy alongside for GitHub readers).
+- Input: advisory PDF at `acme-platform/security/advisory-2026-09.pdf` (markdown copy at `docs/advisory-2026-09.md` for GitHub readers).
 - Target: `acme-platform/` (4 Python services, pytest). 3 are affected; `auth` is not and must stay unchanged.
-- Bob **custom mode** "CVE Autopilot", playbook packaged as a **Bob Skill** if supported (see BOB_PROMPTS.md).
+- Bob **custom mode** "CVE Autopilot", playbook packaged as a **Bob Skill** if supported (see docs/BOB_PROMPTS.md).
 - Bob features shown on screen: **Plan mode → Agent mode**, **document understanding** (PDF),
   **parallel subagents**, **rollback** of failed fix attempts, **HTML report**.
-- Outputs: remediation branch, `REMEDIATION.md`, `CHANGELOG.md` entry, PR description,
+- Outputs: remediation branch, `docs/REMEDIATION.md`, `docs/CHANGELOG.md` entry, PR description,
   `remediation/sla-dashboard.html` (Bob-generated), `remediation/results.json` + diffs.
 - Streamlit app, deployed, that embeds the SLA dashboard.
 
@@ -74,12 +74,12 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 | R3 | Parallel fix | 3 subagents run at the same time (visible in Bob, captured on video). |
 | R4 | Fix loop rules | Pins bumped to fixed version or later; breaking code fixed with minimal change; **no test deleted, skipped or weakened**; failed attempt rolled back; max 3 attempts, else flag for human. |
 | R5 | Green tests | `pytest` passes in all 3 services after the run. Before/after results recorded. |
-| R6 | `REMEDIATION.md` | Per CVE: service, old → new version, files changed, tests before/after, risk (safe bump / breaking fix), time taken. |
+| R6 | `docs/REMEDIATION.md` | Per CVE: service, old → new version, files changed, tests before/after, risk (safe bump / breaking fix), time taken. |
 | R6b | Viewer data | `acme-platform/remediation/results.json` + one `<service>.diff` per service. |
-| R7 | Changelog + PR text | `CHANGELOG.md` entry and PR description, fixes ordered by severity. |
+| R7 | Changelog + PR text | `docs/CHANGELOG.md` entry and PR description, fixes ordered by severity. |
 | R8 | Human gate | Playbook tells Bob to stop and ask before behaviour/public-API changes. |
 | R9 | SLA dashboard | Single self-contained `remediation/sla-dashboard.html` from Bob: per CVE, advisory date, policy deadline (Critical 24h, Medium 14d), fixed-at time, status green/amber/red, time-to-fix vs 43-day industry median, tests before/after, links to diffs. |
-| R10 | Streamlit app | Public URL embeds the SLA dashboard and shows the advisory, diffs and `REMEDIATION.md`. Reads committed files only; no secrets, no Bob calls. |
+| R10 | Streamlit app | Public URL embeds the SLA dashboard and shows the advisory, diffs and `docs/REMEDIATION.md`. Reads committed files only; no secrets, no Bob calls. |
 
 ## 7. Success metrics (for the pitch)
 - **Time:** manual estimate (triage + 3 upgrades + 2 breaking fixes + tests + PR ≈ 4–8 h) vs Autopilot wall-clock minutes. Measured on the real run.
@@ -106,7 +106,7 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 ## 10. Risks
 | Risk | Mitigation |
 |---|---|
-| Coins run out mid-build | Budget in PLAN.md; Streamlit app last and tiny (embeds Bob's HTML); watsonx or manual as fallback. |
+| Coins run out mid-build | Budget in docs/PLAN.md; Streamlit app last and tiny (embeds Bob's HTML); watsonx or manual as fallback. |
 | Bob subagents/parallel/Skills work differently than assumed | Read Bob 2.0 guide first hour; adapt playbook, keep the demo flow. |
 | Fix loop goes wrong (weakens tests) | Explicit rule in playbook; check `git diff tests/` before accepting. |
 | Overclaiming regulation | CRA = reporting duty, PCI = patch window. Say "helps meet", never "makes you compliant". |

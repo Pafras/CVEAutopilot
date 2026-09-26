@@ -1,6 +1,6 @@
 # Advisory sources
 
-Raw OSV records behind `../advisory-2026-09.md`, fetched 2026-09-25 from `https://api.osv.dev/v1/vulns/<id>`.
+Raw OSV records behind `docs/advisory-2026-09.md`, fetched 2026-09-25 from `https://api.osv.dev/v1/vulns/<id>`.
 Content from the GitHub Advisory Database, licensed CC-BY 4.0.
 
 | File | CVE | Package | Fixed in |

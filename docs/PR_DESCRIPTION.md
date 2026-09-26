@@ -73,5 +73,5 @@ inventory:      2 passed in 0.08s
 - [x] No files under `tests/` edited
 - [x] No public function signatures changed
 - [x] `.venv/` not committed
-- [x] REMEDIATION.md, CHANGELOG.md written
+- [x] docs/REMEDIATION.md, docs/CHANGELOG.md written
 - [x] `remediation/` diffs, `results.json`, `sla-dashboard.html` written
