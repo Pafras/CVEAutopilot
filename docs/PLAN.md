@@ -5,7 +5,7 @@
 > Sections above them are earlier drafts kept for history.
 
 **Build window: Sep 25, 23:00 → Sep 27, 23:00 WITA (48h).** Bob access arrives at kickoff.
-Spec, scope and acceptance criteria are in [PRD.md](PRD.md). Point Bob there instead of re-explaining.
+Spec, scope and acceptance criteria are in [docs/PRD.md](PRD.md). Point Bob there instead of re-explaining.
 
 ## What we demo
 Pitch frame: **patch-SLA compliance evidence** (EU CRA Art. 14 reporting live since 11 Sep 2026, PCI DSS 6.3.3),
@@ -14,7 +14,7 @@ not "AI saves dev time". See PRD §1.
 `security/advisory-2026-09.pdf` goes in → Bob reads the PDF → **Plan mode** proposes the plan, dev approves →
 **Agent mode**: one subagent per affected service runs **in parallel** → each bumps the dependency, runs tests,
 fixes the breaking code (rolls back failed attempts), re-runs tests → Bob merges results into one remediation
-branch + `REMEDIATION.md` + CHANGELOG + PR text + **`sla-dashboard.html`** (Bob's HTML report).
+branch + `docs/REMEDIATION.md` + CHANGELOG + PR text + **`sla-dashboard.html`** (Bob's HTML report).
 
 Proof point (already verified):
 | Service | CVE | Plain version bump | After Autopilot |
@@ -25,7 +25,7 @@ Proof point (already verified):
 
 ## Deliverables (built WITH Bob during event)
 1. **Autopilot mode** — Bob custom mode holding the playbook, also packaged as a Bob Skill if supported (format per Bob 2.0 docs at kickoff).
-2. **`REMEDIATION.md`** — per CVE: service, old → new version, files changed, test result before/after, risk (safe bump vs breaking fix), time taken.
+2. **`docs/REMEDIATION.md`** — per CVE: service, old → new version, files changed, test result before/after, risk (safe bump vs breaking fix), time taken.
 3. **SLA dashboard** (`remediation/sla-dashboard.html`) — Bob-generated HTML: per-CVE deadline vs time to fix, green/amber/red.
 4. **Streamlit app** (`app.py`) — embeds the SLA dashboard, shows diffs, report and advisory. Deploy on Streamlit Community Cloud = "Application URL" (lablab wants Streamlit, Replit or Vercel).
 5. **Bob task session summary screenshots** of ALL tasks, from EVERY member — REQUIRED.
@@ -36,7 +36,7 @@ Proof point (already verified):
 6. **Public** GitHub repo — a private repo lowers the score.
 
 ## Autopilot playbook + Bob prompts
-See [BOB_PROMPTS.md](BOB_PROMPTS.md): mode instructions (M), tasks T1–T4, fallbacks, coin log.
+See [docs/BOB_PROMPTS.md](BOB_PROMPTS.md): mode instructions (M), tasks T1–T4, fallbacks, coin log.
 
 ## Bobcoin budget (40 total, no top-ups)
 Rough guess; real cost per task unknown until kickoff. Check Settings → General after each task and re-plan.
@@ -56,22 +56,22 @@ If coins run out: finish by hand or with watsonx. Never re-run the full demo jus
 | Sat 00:00–02:00 | Create Autopilot mode from playbook. Dry run on billing only. Screenshot → `bob_sessions/`. Sleep. |
 | Sat 09:00–13:00 | Full run, 3 services in parallel. Plan mode → Agent mode. Check PRD R1–R9, open SLA dashboard. Check `git diff` on tests. Time it. Screenshot. |
 | Sat 13:00–17:00 | Bob builds Streamlit `app.py` (PRD R10). Push public repo, deploy on Streamlit Community Cloud. |
-| Sat 17:00–20:00 | Clean re-run for the video, screen-recorded. Fill impact numbers in deck + PITCH.md. |
+| Sat 17:00–20:00 | Clean re-run for the video, screen-recorded. Fill impact numbers in deck + docs/PITCH.md. |
 | Sun 09:00–14:00 | Record + edit video (≤5 min). Export deck PDF. Export Bob report → `bob-report/`. Check `bob_sessions/` is complete. |
-| Sun 14:00–17:00 | Fill lablab form (checklist in PITCH.md). **Submit.** |
+| Sun 14:00–17:00 | Fill lablab form (checklist in docs/PITCH.md). **Submit.** |
 | Sun 17:00–23:00 | Buffer only. |
 
 ## Pre-kickoff checklist (do now)
 - [x] Register on lablab.ai
 - [x] GitHub repo (public, MIT)
 - [x] Target repo `acme-platform/` with real CVEs, tests verified
-- [x] Pitch text, video script, submission checklist (PITCH.md)
+- [x] Pitch text, video script, submission checklist (docs/PITCH.md)
 - [ ] Slide deck: update to compliance frame (CRA/PCI on slide 2, competition table on slide 9); numbers after demo
 - [x] Cover image (`assets/cover.png`)
-- [x] PRD (PRD.md)
+- [x] PRD (docs/PRD.md)
 - [x] `bob_sessions/` folder
 - [x] Advisory PDF (`acme-platform/security/advisory-2026-09.pdf`) + OSV source records
-- [x] Bob prompts (BOB_PROMPTS.md)
+- [x] Bob prompts (docs/BOB_PROMPTS.md)
 - [ ] IBMid created (same email as lablab registration)
 - [ ] Bob IDE installed, **v2.0.2 or later** (v1.0.3 / v2.0.0 stop working Sep 30)
 - [ ] Skim Bob guide
@@ -80,7 +80,7 @@ If coins run out: finish by hand or with watsonx. Never re-run the full demo jus
 - [ ] Screen recorder ready (QuickTime ok, export MP4)
 
 ## Stretch (only if time left)
-- Bob hook: new advisory PDF in `security/` starts Autopilot (BOB_PROMPTS.md stretch).
+- Bob hook: new advisory PDF in `security/` starts Autopilot (docs/BOB_PROMPTS.md stretch).
 - Add a 4th service in Node to show multi-language.
 
 ## Upgrade options (Sat 26 Sep, NOT decided yet — pick later)
@@ -132,7 +132,7 @@ Notes:
 ## DECIDED: upgrade breakdown (Sat 26 Sep ~18:00 WITA) — tracked as GitHub issues
 Deadline for all upgrades: **Sun 12:00 WITA**; anything unfinished is dropped (current version is already submittable).
 File ownership (avoid push conflicts): Pafras = `.bob/`, `acme-platform/services/`, `acme-platform/security/` ·
-Erin = `docs/`, `README.md`, slides/video content · Dyan = `app.py`, root `requirements.txt`, `.github/workflows/`.
+Erin = `docs/`, `docs/README.md`, slides/video content · Dyan = `app.py`, root `requirements.txt`, `.github/workflows/`.
 
 | Who | Issue | Plan ref | Coins |
 |---|---|---|---|
@@ -160,7 +160,7 @@ Closed: #1 (E1), #2 (E2). PR #5 merged 367e9e1.
 ### Rebalanced (Sat ~18:10): Erin focuses on video + slides
 - Moved to Dyan: #15 V3 manual timing, #16 V5 SBOM, #17 U5 COMPLIANCE.md + README fix.
 - Erin keeps presentation work only: #3 slides, #4 video, #18 user quotes, #19 ROI + trust slide content.
-- File ownership update: Dyan now also owns `docs/COMPLIANCE.md`, `README.md`, `acme-platform/remediation/sbom/`.
+- File ownership update: Dyan now also owns `docs/COMPLIANCE.md`, `docs/README.md`, `acme-platform/remediation/sbom/`.
 - Dyan order: #6 Streamlit (critical) → #8 scorecard tab (after #9) → #16 SBOM → #17 COMPLIANCE → #7 GitHub Action → #15 manual timing.
   Anything not done by Sun 12:00 is dropped; #6 is the only must-have.
 

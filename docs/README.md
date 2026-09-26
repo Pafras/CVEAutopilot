@@ -8,8 +8,9 @@ advisory, finds every affected service, and runs parallel subagents that upgrade
 repair breaking changes and verify with tests.
 
 ## Repo layout
+- `docs/` — all Markdown documentation, reports, and playbook amendments
 - `acme-platform/` — sample monorepo with real vulnerable dependencies (the remediation target)
-- `acme-platform/security/advisory-2026-09.md` — the security scan report Bob reads
+- `docs/advisory-2026-09.md` — the security scan report Bob reads
 - `bob_sessions/` — exported IBM Bob task session reports (required for submission)
 
 ## Why a plain version bump is not enough
@@ -21,12 +22,12 @@ repair breaking changes and verify with tests.
 
 ## How it works
 
-See [`docs/architecture.md`](docs/architecture.md) for the full Mermaid flowchart.
+See [`docs/architecture.md`](architecture.md) for the full Mermaid flowchart.
 
 In short: Bob reads the advisory PDF in **Plan mode** (extract CVEs, pip-audit cross-check, find usages,
 mark unaffected services), waits for human approval, then switches to **Agent mode** and runs one
 subagent per affected service in parallel. Each subagent baselines tests, bumps the dependency, fixes
-any breaking changes, and rolls back on failure. Bob then writes `REMEDIATION.md`, a `CHANGELOG.md`
+any breaking changes, and rolls back on failure. Bob then writes `docs/REMEDIATION.md`, a `docs/CHANGELOG.md`
 entry, PR description, and a self-contained SLA dashboard. The Streamlit app displays all outputs.
 
 ## Run the demo
@@ -39,7 +40,7 @@ entry, PR description, and a self-contained SLA dashboard. The Streamlit app dis
 ```
 Mode: CVE Autopilot. Remediate acme-platform/security/advisory-2026-09.pdf end to end.
 Follow the full playbook, steps 1-9. Plan first and wait for my approval. Then run the three affected services
-(billing, notifications, inventory) as parallel subagents. Done = PRD.md requirements R1-R9 all met.
+(billing, notifications, inventory) as parallel subagents. Done = docs/PRD.md requirements R1-R9 all met.
 Finish with a checklist of R1-R9 marked pass/fail and the total wall-clock time.
 ```
 
@@ -61,7 +62,7 @@ Then open `acme-platform/remediation/sla-dashboard.html` in a browser.
 ## Security
 Based on the [IBM hackathon template](https://github.com/watsonxhackathon/ibm-hackathon-template):
 `.gitignore` and `.bobignore` keep credentials out of git and Bob session logs.
-Copy `.env.example` to `.env` for any keys, and read [SECURITY.MD](SECURITY.MD) before committing.
+Copy `.env.example` to `.env` for any keys, and read [docs/SECURITY.MD](SECURITY.MD) before committing.
 
 ## License
 MIT

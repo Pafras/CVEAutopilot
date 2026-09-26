@@ -44,9 +44,9 @@ flowchart TD
         L4 --> AGG["Aggregate results"]
     end
 
-    AGG --> OUT1["REMEDIATION.md"]
-    AGG --> OUT2["CHANGELOG.md entry"]
-    AGG --> OUT3["PR_DESCRIPTION.md"]
+    AGG --> OUT1["docs/REMEDIATION.md"]
+    AGG --> OUT2["docs/CHANGELOG.md entry"]
+    AGG --> OUT3["docs/PR_DESCRIPTION.md"]
     AGG --> OUT4["remediation/sla-dashboard.html<br>(inline, self-contained)"]
     AGG --> OUT5["remediation/results.json<br>+ one .diff per service"]
 
