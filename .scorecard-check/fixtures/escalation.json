@@ -1,0 +1,29 @@
+{
+  "scorecard": {
+    "advisory_scope": {
+      "cves_found": 2,
+      "cves_closed": 1,
+      "remediation_rate_pct": 50,
+      "verified_by_rescan": true,
+      "auto_fixed_services": 1,
+      "escalated_services": 1,
+      "tests_changed": 0,
+      "sla_compliant_cves": 1,
+      "sla_compliance_rate_pct": 100,
+      "time_per_cve_seconds": 20.0,
+      "bobcoins_per_cve": 0.5
+    },
+    "rescan_findings": {
+      "new_cves_found": 1,
+      "advisory_cves_still_open": 0,
+      "open_cves_total": 1,
+      "escalated_services": 1,
+      "escalation_reason": "Runtime too old",
+      "action_required": "Upgrade runtime",
+      "remediation_rate_pct": 0,
+      "cves": [
+        {"id": "CVE-2099-12345", "pysec": "PYSEC-2099-1", "package": "example", "fix": "9.0.0"}
+      ]
+    }
+  }
+}

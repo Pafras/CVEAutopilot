@@ -191,5 +191,6 @@ Code fixes on branch autopilot/advisory-2026-09 are done and tests pass. Only do
 | Pafras | PR | 0.07 | 5.41 | /create-pull-request → PR #5 |
 | Pafras | T3 | | | |
 | Dyan | T4 (#6) | 3.32 | 3.40 | Task summary shows 3.32; Settings > General shows account Usage 3.40 (26 Sep 2026). Viewer: 41 lines, four AppTest scenarios passed; local health checked. Screenshot: `bob_sessions/diapers_dyan_task01_streamlit_app_summary.png`. No Git commands, commit, push, or deploy. |
+| Dyan | S1 app (#8) | 3.28 | 7.26 | Task summary shows 3.28; Settings > General shows account Usage 7.26 (26 Sep 2026); account total includes other tasks. Bob added the first Scorecard tab in `app.py` (171 lines total). 12/12 AppTest cases passed and were rerun by Codex; actual original tabs and local Safari rendering also checked. Temporary verification script: `.scorecard-check/test_scorecard.py`, run with `/tmp/cve_st_venv/bin/python`. Real remediation artifacts and existing edits preserved by non-Git hash comparison. Screenshot: `bob_sessions/diapers_dyan_task03_scorecard_tab_summary.png`. No Git commands, commit, push, or deploy. |
 | Erin | E1 | | | |
 | Erin | E2 | | | |
