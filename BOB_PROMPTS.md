@@ -185,7 +185,8 @@ Code fixes on branch autopilot/advisory-2026-09 are done and tests pass. Only do
 | Member | Task | Coins used | Running total | Notes |
 |---|---|---|---|---|
 | Pafras | T1 | 1.49 | 1.49 | Dry run billing OK; amendments in .bob/rules-cve-autopilot/ |
-| Pafras | T2 | | | |
+| Pafras | T2 | 3.84 | 5.33 | Full run: 3 parallel subagents, 9 CVEs, R1-R9 pass, 4m29s |
+| Pafras | PR | 0.07 | 5.41 | /create-pull-request → PR #5 |
 | Pafras | T3 | | | |
 | Dyan | T4 | | | |
 | Erin | E1 | | | |

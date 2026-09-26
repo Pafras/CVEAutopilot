@@ -1,4 +1,5 @@
-from jinja2 import Environment, Markup, escape
+from jinja2 import Environment
+from markupsafe import Markup, escape
 
 env = Environment(autoescape=True)
 
