@@ -25,11 +25,11 @@
   header h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
   header p  { color: var(--muted); margin-top: .4rem; font-size: .9rem; }
 
-  .grid { display: grid; gap: 1.25rem; max-width: 960px; margin: 0 auto;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .grid { display: grid; gap: 1.25rem; max-width: 1200px; margin: 0 auto;
+          grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
 
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px;
-          padding: 1.25rem; display: flex; flex-direction: column; gap: .75rem; }
+          padding: 1.25rem; display: flex; flex-direction: column; gap: .75rem; min-width: 0; }
   .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
   .card-title  { font-size: 1rem; font-weight: 600; }
   .card-pkg    { font-size: .8rem; color: var(--muted); margin-top: .15rem; font-family: monospace; }
@@ -77,6 +77,11 @@
   .reach-evidence         { font-size: .7rem; color: var(--muted); font-family: monospace;
                             margin-top: .1rem; line-height: 1.4; }
   .per-cve-table { width: 100%; border-collapse: collapse; font-size: .75rem; margin-top: .25rem; }
+  /* stack each CVE row so it fits any card width */
+  .per-cve-table th { display: none; }
+  .per-cve-table tr:first-child { padding: 0; border: 0; }
+  .per-cve-table tr { display: block; padding: .45rem 0; border-bottom: 1px solid var(--border); }
+  .per-cve-table td { display: block; overflow-wrap: anywhere; }
   .per-cve-table th { text-align: left; color: var(--muted); font-weight: 600;
                       font-size: .68rem; text-transform: uppercase; letter-spacing: .05em;
                       padding-bottom: .3rem; border-bottom: 1px solid var(--border); }
