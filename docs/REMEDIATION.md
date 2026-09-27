@@ -309,7 +309,7 @@ Fix versions `requests==2.33.0` and `urllib3==2.7.0` drop support for Python 3.9
 | Services clean (no action) | 3 (auth, billing, notifications) |
 | Services fixed | 1 (web-gateway) |
 | Services escalated | 2 (reports, inventory) |
-| Advisories found | 31 (24 axios GHSAs + 5 lodash GHSAs + 1 PyYAML CVE + 1 requests CVE re-confirmed) |
+| Advisories found | 33 (24 axios GHSAs + 5 lodash GHSAs + 1 PyYAML CVE + 3 inventory CVEs: CVE-2026-25645, CVE-2026-44432, CVE-2026-44431) |
 | Advisories closed | **29** (24 axios + 5 lodash) |
 | Advisories escalated | 4 (CVE-2020-14343, CVE-2026-25645, CVE-2026-44432, CVE-2026-44431) |
 | Remediation rate | **88%** |
