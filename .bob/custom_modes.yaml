@@ -59,8 +59,12 @@ customModes:
       8. Save output for the viewer:
          - acme-platform/remediation/<service>.diff  (git diff main -- services/<service>)
          - acme-platform/remediation/results.json:
-           [{"service","package","cves":[],"severity","old","new","baseline","after","risk","files":[],
-             "deadline_hours","fixed_at","minutes_to_fix"}]
+           {"findings": [{"service","package","cves":[],"severity","old","new","baseline","after","risk",
+              "files":[],"deadline_hours","fixed_at","minutes_to_fix","kev_listed","reachability",
+              "reachability_evidence"}],
+            "scorecard": {"advisory_scope": {cves_found, cves_closed, cves_escalated:[], remediation_rate_pct,
+              sla_compliance_rate_pct, total_time_seconds, bobcoins_total, ...},
+              "rescan_findings": {new_cves_found, open_cves_total, escalated_services, cves:[], ...}}}
          - acme-platform/remediation/sla-dashboard.html: one self-contained HTML file (inline CSS, no
            external requests). Header "Patch SLA evidence — advisory-2026-09". One card per CVE: severity,
            policy deadline, time to fix, status green (inside SLA) / amber (<25% of window left) / red (missed),
