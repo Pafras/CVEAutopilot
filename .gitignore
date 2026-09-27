@@ -121,6 +121,7 @@ build/
 .pytest_cache/
 
 
-# dyan
+# internal-used
+audit.md
 /issues
 AGENTS.md
