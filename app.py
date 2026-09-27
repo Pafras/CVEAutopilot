@@ -7,6 +7,8 @@ import streamlit.components.v1 as components
 ROOT = Path(__file__).parent
 _NA = "Not generated yet — run CVE Autopilot"
 
+st.set_page_config(page_title="CVE Autopilot", layout="wide")
+
 st.title("CVE Autopilot")
 st.caption("Security advisory in. Tested fix and SLA evidence out.")
 
@@ -145,7 +147,10 @@ with tab_scorecard:
 
 with tab_sla:
     p = ROOT / "acme-platform" / "remediation" / "sla-dashboard.html"
-    components.html(p.read_text("utf-8"), height=900, scrolling=True) if p.exists() else st.info(_NA)
+    if p.exists():
+        components.html(p.read_text("utf-8"), height=1400, scrolling=True)
+    else:
+        st.info(_NA)
 
 with tab_diffs:
     diff_files = sorted((ROOT / "acme-platform" / "remediation").glob("*.diff"))
@@ -158,7 +163,10 @@ with tab_diffs:
 
 with tab_report:
     p = ROOT / "docs" / "REMEDIATION.md"
-    st.markdown(p.read_text("utf-8")) if p.exists() else st.info(_NA)
+    if p.exists():
+        st.markdown(p.read_text("utf-8"))
+    else:
+        st.info(_NA)
 
 with tab_advisory:
     pdf = ROOT / "acme-platform" / "security" / "advisory-2026-09.pdf"
@@ -168,4 +176,7 @@ with tab_advisory:
                            file_name="advisory-2026-09.pdf", mime="application/pdf")
     else:
         st.info(_NA)
-    st.markdown(md.read_text("utf-8")) if md.exists() else st.info(_NA)
+    if md.exists():
+        st.markdown(md.read_text("utf-8"))
+    else:
+        st.info(_NA)
