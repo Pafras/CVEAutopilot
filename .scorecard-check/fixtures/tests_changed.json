@@ -1,0 +1,25 @@
+{
+  "scorecard": {
+    "advisory_scope": {
+      "cves_found": 3,
+      "cves_closed": 3,
+      "remediation_rate_pct": 100,
+      "verified_by_rescan": true,
+      "auto_fixed_services": 3,
+      "escalated_services": 0,
+      "tests_changed": 2,
+      "sla_compliant_cves": 3,
+      "sla_compliance_rate_pct": 100,
+      "time_per_cve_seconds": 5.0,
+      "bobcoins_per_cve": 0.2
+    },
+    "rescan_findings": {
+      "new_cves_found": 0,
+      "advisory_cves_still_open": 0,
+      "open_cves_total": 0,
+      "escalated_services": 0,
+      "remediation_rate_pct": 0,
+      "cves": []
+    }
+  }
+}

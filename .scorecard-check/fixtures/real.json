@@ -1,0 +1,41 @@
+{
+  "findings": [],
+  "scorecard": {
+    "advisory_scope": {
+      "cves_found": 9,
+      "cves_closed": 8,
+      "cves_escalated": ["CVE-2026-25645"],
+      "remediation_rate_pct": 89,
+      "verified_by_rescan": true,
+      "auto_fixed_services": 3,
+      "escalated_services": 1,
+      "breaking_changes_repaired": 2,
+      "tests_changed": 0,
+      "sla_compliant_cves": 8,
+      "sla_open_inside_window": 1,
+      "sla_open_deadline": "2026-10-10",
+      "sla_compliance_rate_pct": 100,
+      "total_time_seconds": 269,
+      "time_per_cve_seconds": 33.6,
+      "bobcoins_total": 3.84,
+      "bobcoins_per_cve": 0.48,
+      "note": "requests 2.32.5 (advisory target) does not fix CVE-2026-25645; the fix is 2.33.0, which needs Python >= 3.10. The re-scan caught it."
+    },
+    "rescan_findings": {
+      "new_cves_found": 2,
+      "advisory_cves_still_open": 1,
+      "open_cves_total": 3,
+      "new_cves_closed": 0,
+      "remediation_rate_pct": 0,
+      "escalated_services": 1,
+      "escalation_reason": "Fix versions (requests 2.33.0, urllib3 2.7.0) require Python >= 3.10; inventory runs Python 3.9",
+      "affected_service": "inventory",
+      "cves": [
+        {"id": "CVE-2026-25645", "pysec": "PYSEC-2026-2275", "package": "requests", "fix": "2.33.0"},
+        {"id": "CVE-2026-44432", "pysec": "PYSEC-2026-142",  "package": "urllib3",  "fix": "2.7.0"},
+        {"id": "CVE-2026-44431", "pysec": "PYSEC-2026-141",  "package": "urllib3",  "fix": "2.7.0"}
+      ],
+      "action_required": "Upgrade inventory runtime to Python 3.10+, then bump requests to 2.33.0 and urllib3 to 2.7.0"
+    }
+  }
+}

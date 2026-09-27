@@ -1,0 +1,6 @@
+{
+  "scorecard": {
+    "advisory_scope": "unexpected string value",
+    "rescan_findings": 42
+  }
+}

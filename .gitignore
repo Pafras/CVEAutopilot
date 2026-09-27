@@ -119,4 +119,8 @@ build/
 # Add project-specific patterns below
 # ============================================.venvs/
 .pytest_cache/
+
+
+# dyan
+/issues
 AGENTS.md
