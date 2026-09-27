@@ -121,6 +121,133 @@
           "reachability_evidence": "services/inventory/client.py:7 — only requests.Session is used; urllib3.ProxyManager is never instantiated directly, so the cross-origin redirect via low-level API does not apply."
         }
       ]
+    },
+    {
+      "_run": "scan-2026-09",
+      "service": "web-gateway",
+      "package": "axios",
+      "cves": [
+        "GHSA-cph5-m8f7-6c5x",
+        "GHSA-wf5p-g6vw-rhxx",
+        "GHSA-jr5f-v2jv-69x6",
+        "GHSA-3p68-rc4w-qgx5",
+        "GHSA-w9j2-pvgh-6h63",
+        "GHSA-pmwg-cvhr-8vh7",
+        "GHSA-pjwm-pj3p-43mv",
+        "GHSA-xhjh-pmcv-23jw",
+        "GHSA-m7pr-hjqh-92cm",
+        "GHSA-5c9x-8gcm-mpgx",
+        "GHSA-vf2m-468p-8v99",
+        "GHSA-pf86-5x62-jrwf",
+        "GHSA-6chq-wfr3-2hj9",
+        "GHSA-xx6v-rp6x-q39c",
+        "GHSA-43fc-jf86-j433",
+        "GHSA-fvcv-3m26-pcqx",
+        "GHSA-62hf-57xw-28j9",
+        "GHSA-hfxv-24rg-xrqf",
+        "GHSA-p92q-9vqr-4j8v",
+        "GHSA-j5f8-grm9-p9fc",
+        "GHSA-3g43-6gmg-66jw",
+        "GHSA-898c-q2cr-xwhg",
+        "GHSA-mmx7-hfxf-jppx",
+        "GHSA-7q8q-rj6j-mhjq"
+      ],
+      "severity": "HIGH",
+      "old": "0.21.1",
+      "new": "0.34.0",
+      "baseline": "tests 9 pass 9 fail 0 cancelled 0 skipped 0",
+      "after": "tests 9 pass 9 fail 0 cancelled 0 skipped 0",
+      "risk": "safe bump",
+      "files": [
+        "services/web-gateway/package.json",
+        "services/web-gateway/package-lock.json"
+      ],
+      "deadline_hours": 168,
+      "fixed_at": "2026-09-27T06:36:35Z",
+      "minutes_to_fix": 5.0,
+      "kev_listed": false,
+      "reachability": "reachable",
+      "reachability_evidence": "services/web-gateway/index.js:4 — axios imported; index.js:29 — caller-supplied overrides merged directly into request config, prototype-pollution and SSRF reachable via buildStockRequestConfig(params, overrides)"
+    },
+    {
+      "_run": "scan-2026-09",
+      "service": "web-gateway",
+      "package": "lodash",
+      "cves": [
+        "GHSA-r5fr-rjxr-66jc",
+        "GHSA-35jh-r3h4-6jhm",
+        "GHSA-29mw-wpgm-hmr9",
+        "GHSA-f23m-r3pf-42rh",
+        "GHSA-xxjr-mmjv-4gpg"
+      ],
+      "severity": "HIGH",
+      "old": "4.17.20",
+      "new": "4.18.1",
+      "baseline": "tests 9 pass 9 fail 0 cancelled 0 skipped 0",
+      "after": "tests 9 pass 9 fail 0 cancelled 0 skipped 0",
+      "risk": "safe bump",
+      "files": [
+        "services/web-gateway/package.json",
+        "services/web-gateway/package-lock.json"
+      ],
+      "deadline_hours": 168,
+      "fixed_at": "2026-09-27T06:36:35Z",
+      "minutes_to_fix": 5.0,
+      "kev_listed": false,
+      "reachability": "reachable",
+      "reachability_evidence": "services/web-gateway/index.js:29 — _.merge({}, base, overrides) where overrides is caller-supplied (prototype-pollution via __proto__ key); index.js:55 — _.template used (code-injection vector in <4.17.21)"
+    },
+    {
+      "_run": "scan-2026-09",
+      "service": "reports",
+      "package": "PyYAML",
+      "cves": ["CVE-2020-14343"],
+      "severity": "CRITICAL",
+      "old": "5.3.1",
+      "new": "ESCALATED — secure bump (6.0) breaks !!python/object test; UnsafeLoader forbidden by rule 05",
+      "baseline": "1 passed in 0.01s",
+      "after": "ESCALATED — yaml.constructor.ConstructorError on !!python/object tag with FullLoader 6.0",
+      "risk": "ESCALATED: needs human decision",
+      "files": [],
+      "deadline_hours": 24,
+      "fixed_at": null,
+      "minutes_to_fix": null,
+      "kev_listed": false,
+      "reachability": "reachable",
+      "reachability_evidence": "services/reports/report_loader.py:25 — yaml.load(f, Loader=yaml.FullLoader) reads caller-supplied file path; FullLoader vulnerable to !!python/object/apply RCE on attacker-controlled YAML",
+      "escalation_reason": "PyYAML 6.0 FullLoader rejects !!python/object tag used in the test fixture (tests/test_report_loader.py:11); the only way to pass the test with a secure version is yaml.UnsafeLoader, which is forbidden by rule 05 §1",
+      "escalation_options": [
+        "migrate — rewrite report specs to plain-dict YAML (drop !!python/object tag); update report_loader.py to use yaml.safe_load; update test accordingly",
+        "accept risk with sign-off — restrict YAML input to trusted internal paths only and document compensating control",
+        "pin and isolate — keep PyYAML 5.3.1 in a sandboxed environment, monitor for exploitation, schedule migration sprint"
+      ]
+    },
+    {
+      "_run": "scan-2026-09",
+      "_comment": "inventory escalation confirmed again by live scan — same Python 3.9 constraint as advisory run",
+      "service": "inventory",
+      "package": "requests + urllib3",
+      "cves": ["CVE-2026-25645", "CVE-2026-44432", "CVE-2026-44431"],
+      "pysec_ids": ["PYSEC-2026-2275", "PYSEC-2026-142", "PYSEC-2026-141"],
+      "severity": "MEDIUM",
+      "old": "requests==2.32.5, urllib3==2.6.3",
+      "new": "ESCALATED — fix requires Python >= 3.10 (service runs 3.9)",
+      "baseline": "n/a (pre-existing escalation, confirmed by live scan)",
+      "after": "n/a",
+      "risk": "ESCALATED: needs human decision",
+      "files": [],
+      "deadline_hours": 336,
+      "fixed_at": null,
+      "minutes_to_fix": null,
+      "kev_listed": false,
+      "reachability": "present but not reachable",
+      "reachability_evidence": "services/inventory/client.py — extract_zipped_paths never called; no read(amt=N)/drain_conn(); no urllib3.ProxyManager instantiation",
+      "escalation_reason": "requests 2.33.0 and urllib3 2.7.0 (the fix versions) drop support for Python 3.9; upgrading the runtime is a prerequisite",
+      "escalation_options": [
+        "migrate — upgrade inventory runtime to Python 3.10+, then bump requests==2.33.0 and urllib3==2.7.0",
+        "accept risk with sign-off — all three CVEs are 'present but not reachable'; document compensating control",
+        "pin and isolate — keep current versions, schedule Python runtime upgrade sprint"
+      ]
     }
   ],
   "scorecard": {
@@ -159,6 +286,37 @@
         {"id": "CVE-2026-44431", "pysec": "PYSEC-2026-141",  "package": "urllib3",  "fix": "2.7.0"}
       ],
       "action_required": "Upgrade inventory runtime to Python 3.10+, then bump requests to 2.33.0 and urllib3 to 2.7.0"
+    },
+    "scan_scope": {
+      "run": "scan-2026-09",
+      "branch": "autopilot/scan-2026-09",
+      "scan_date": "2026-09-27",
+      "services_scanned": ["auth", "billing", "inventory", "notifications", "reports", "web-gateway"],
+      "services_clean": ["auth", "billing", "notifications"],
+      "services_fixed": ["web-gateway"],
+      "services_escalated": ["reports", "inventory"],
+      "cves_found": 33,
+      "cves_found_note": "24 axios GHSAs + 5 lodash GHSAs + 1 PyYAML CVE (CVE-2020-14343) + 3 inventory CVEs (CVE-2026-25645, CVE-2026-44432, CVE-2026-44431)",
+      "distinct_packages_with_vulns": 4,
+      "cves_closed": 29,
+      "cves_closed_note": "24 axios + 5 lodash advisories closed by web-gateway bump",
+      "cves_escalated": ["CVE-2020-14343 (reports)", "CVE-2026-25645 (inventory)", "CVE-2026-44432 (inventory)", "CVE-2026-44431 (inventory)"],
+      "remediation_rate_pct": 88,
+      "verified_by_rescan": true,
+      "auto_fixed_services": 1,
+      "escalated_services": 2,
+      "breaking_changes_repaired": 0,
+      "tests_changed": 0,
+      "sla_compliant_cves": 29,
+      "sla_compliance_rate_pct": 100,
+      "total_time_seconds": 378,
+      "time_per_cve_seconds": 13.0,
+      "bobcoins_per_cve": "n/a",
+      "rescan_result": "web-gateway: 0 vulnerabilities (npm audit clean)",
+      "escalation_notes": {
+        "reports": "Safety-brake (rule 05): PyYAML 6.0 FullLoader rejects !!python/object tag; test cannot pass without UnsafeLoader. Migrate YAML format or accept risk with sign-off.",
+        "inventory": "Python 3.9 runtime incompatible with fix versions (requests 2.33.0, urllib3 2.7.0). Upgrade runtime first."
+      }
     }
   }
 }
