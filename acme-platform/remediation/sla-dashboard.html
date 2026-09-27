@@ -446,10 +446,304 @@
   </p>
 </div>
 
+<!-- ══════════════════════════════════════════════════════════════════
+     SCAN 2026-09 SECTION
+     ══════════════════════════════════════════════════════════════════ -->
+
+<div style="max-width:960px;margin:3rem auto 1rem;border-top:2px solid #334155;padding-top:2rem;">
+  <h2 style="font-size:1.3rem;font-weight:700;margin-bottom:1.5rem;">🔎 Scan 2026-09 — Live scan run (2026-09-27)</h2>
+  <p style="color:var(--muted);font-size:.88rem;margin-bottom:2rem;">
+    No advisory PDF — pip-audit (Python) and npm audit (Node) run across all 6 services.
+    Branch: <code>autopilot/scan-2026-09</code> · Scanned: auth, billing, inventory, notifications, reports, web-gateway.
+  </p>
+</div>
+
+<!-- Scan Scorecard -->
+<div class="scorecard" style="margin-bottom:0;">
+  <div class="scorecard-scope">
+    <h2>📊 Scorecard — Scan scope (scan-2026-09)</h2>
+    <div class="sc-grid">
+
+      <div class="sc-tile ok">
+        <div class="sc-label">Services clean (no action)</div>
+        <div class="sc-value">3</div>
+        <div class="sc-sub">auth · billing · notifications</div>
+      </div>
+
+      <div class="sc-tile ok">
+        <div class="sc-label">Services fixed</div>
+        <div class="sc-value">1</div>
+        <div class="sc-sub">web-gateway (axios + lodash)</div>
+      </div>
+
+      <div class="sc-tile warn">
+        <div class="sc-label">Services escalated</div>
+        <div class="sc-value">2</div>
+        <div class="sc-sub">reports (safety-brake) · inventory (Py 3.9)</div>
+      </div>
+
+      <div class="sc-tile warn">
+        <div class="sc-label">Remediation rate</div>
+        <div class="sc-value">88%</div>
+        <div class="sc-bar-track"><div class="sc-bar-fill sc-bar-green" style="width:88%"></div></div>
+        <div class="sc-sub">29 of 31 advisories closed · 4 escalated</div>
+      </div>
+
+      <div class="sc-tile ok">
+        <div class="sc-label">SLA compliance</div>
+        <div class="sc-value">100%</div>
+        <div class="sc-bar-track"><div class="sc-bar-fill sc-bar-green" style="width:100%"></div></div>
+        <div class="sc-sub">29 / 29 closed inside policy window (7 days)</div>
+      </div>
+
+      <div class="sc-tile ok">
+        <div class="sc-label">Verified by re-scan</div>
+        <div class="sc-value">Yes ✅</div>
+        <div class="sc-sub">npm audit: 0 vulns after bump</div>
+      </div>
+
+      <div class="sc-tile ok">
+        <div class="sc-label">Breaking changes repaired</div>
+        <div class="sc-value">0</div>
+        <div class="sc-sub">both bumps were safe</div>
+      </div>
+
+      <div class="sc-tile ok">
+        <div class="sc-label">Tests changed</div>
+        <div class="sc-value">0</div>
+        <div class="sc-sub">policy: must be 0 ✅</div>
+      </div>
+
+      <div class="sc-tile ok">
+        <div class="sc-label">Time per advisory closed</div>
+        <div class="sc-value">~13 s</div>
+        <div class="sc-sub">378 s total ÷ 29 closed</div>
+      </div>
+
+    </div>
+
+    <div class="sc-notice">
+      <strong>⚠ 2 services escalated — require human decision before closure</strong><br>
+      <strong>reports:</strong> Safety-brake (rule 05) — PyYAML 6.0 rejects <code>!!python/object</code> tag used in test fixture;
+      switching to <code>UnsafeLoader</code> to pass the test is forbidden. Migrate YAML format to plain-dict, or accept risk with sign-off.<br><br>
+      <strong>inventory:</strong> Pre-existing Python 3.9 blocker confirmed again by live scan. requests 2.33.0 + urllib3 2.7.0 require Python ≥ 3.10.
+      Upgrade runtime first.
+    </div>
+  </div>
+</div>
+
+<!-- Scan CVE Cards -->
+<div class="grid" style="margin-top:1.5rem;">
+
+  <!-- web-gateway / axios — HIGH, safe bump -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">web-gateway</div>
+        <div class="card-pkg">axios 0.21.1 → 0.34.0</div>
+      </div>
+      <span class="badge" style="background:#7c1a1a;color:#fca5a5;border:1px solid #fca5a5;">High</span>
+    </div>
+
+    <div class="status-row">
+      <div class="dot dot-green"></div>
+      <span class="status-label status-green">✅ Inside SLA</span>
+    </div>
+
+    <div class="cves">
+      <span class="cve-pill">GHSA-cph5-m8f7-6c5x</span>
+      <span class="cve-pill">GHSA-wf5p-g6vw-rhxx</span>
+      <span class="cve-pill" style="color:#94a3b8;">+22 more</span>
+    </div>
+
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <div>
+      <span class="reach-reachable">⚠ Reachable</span>
+      <div class="reach-evidence">index.js:29 — caller-supplied overrides merged via _.merge into request config; prototype-pollution + SSRF reachable via buildStockRequestConfig(params, overrides)</div>
+    </div>
+
+    <table class="info">
+      <tr><td>Policy deadline</td><td>7 days (168 h)</td></tr>
+      <tr><td>Time to fix</td><td>~5 min</td></tr>
+      <tr><td>SLA consumed</td><td>&lt;0.1% of 168 h</td></tr>
+      <tr><td>Fixed at</td><td>2026-09-27 06:36:35 UTC</td></tr>
+      <tr><td>Risk</td><td><span class="risk-pill risk-safe">safe bump</span></td></tr>
+    </table>
+
+    <div class="tests">
+      <span class="label">Tests before → after</span><br>
+      tests 9 pass 9 fail 0  →  tests 9 pass 9 fail 0
+    </div>
+
+    <div style="font-size:.78rem;color:var(--muted);">
+      Files: <code>package.json</code>, <code>package-lock.json</code>
+    </div>
+  </div>
+
+  <!-- web-gateway / lodash — HIGH, safe bump -->
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">web-gateway</div>
+        <div class="card-pkg">lodash 4.17.20 → 4.18.1</div>
+      </div>
+      <span class="badge" style="background:#7c1a1a;color:#fca5a5;border:1px solid #fca5a5;">High</span>
+    </div>
+
+    <div class="status-row">
+      <div class="dot dot-green"></div>
+      <span class="status-label status-green">✅ Inside SLA</span>
+    </div>
+
+    <div class="cves">
+      <span class="cve-pill">GHSA-r5fr-rjxr-66jc</span>
+      <span class="cve-pill">GHSA-35jh-r3h4-6jhm</span>
+      <span class="cve-pill" style="color:#94a3b8;">+3 more</span>
+    </div>
+
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <div>
+      <span class="reach-reachable">⚠ Reachable</span>
+      <div class="reach-evidence">index.js:29 — _.merge({}, base, overrides) with caller-supplied overrides (prototype-pollution via __proto__); index.js:55 — _.template used (code-injection in &lt;4.17.21)</div>
+    </div>
+
+    <table class="info">
+      <tr><td>Policy deadline</td><td>7 days (168 h)</td></tr>
+      <tr><td>Time to fix</td><td>~5 min</td></tr>
+      <tr><td>SLA consumed</td><td>&lt;0.1% of 168 h</td></tr>
+      <tr><td>Fixed at</td><td>2026-09-27 06:36:35 UTC</td></tr>
+      <tr><td>Risk</td><td><span class="risk-pill risk-safe">safe bump</span></td></tr>
+    </table>
+
+    <div class="tests">
+      <span class="label">Tests before → after</span><br>
+      tests 9 pass 9 fail 0  →  tests 9 pass 9 fail 0
+    </div>
+
+    <div style="font-size:.78rem;color:var(--muted);">
+      Files: <code>package.json</code>, <code>package-lock.json</code>
+    </div>
+  </div>
+
+  <!-- reports / PyYAML — CRITICAL, ESCALATED -->
+  <div class="card" style="border-left:4px solid #c00;">
+    <div class="card-header">
+      <div>
+        <div class="card-title">reports</div>
+        <div class="card-pkg">PyYAML 5.3.1 (bump attempted → rolled back)</div>
+      </div>
+      <span class="badge badge-critical">Critical</span>
+    </div>
+
+    <div style="font-weight:700;color:#dc2626;font-size:.88rem;margin:.25rem 0;">⚠ ESCALATED — needs human decision</div>
+
+    <div class="cves">
+      <span class="cve-pill">CVE-2020-14343</span>
+    </div>
+
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <div>
+      <span class="reach-reachable">⚠ Reachable</span>
+      <div class="reach-evidence">report_loader.py:25 — yaml.load(f, Loader=yaml.FullLoader) reads caller-supplied path; FullLoader vulnerable to !!python/object/apply RCE</div>
+    </div>
+
+    <div style="font-size:.78rem;background:#1a0a0a;border:1px solid #c00;border-radius:6px;padding:.65rem .75rem;color:#fca5a5;line-height:1.5;margin-top:.25rem;">
+      <strong>Why escalated (rule 05):</strong> PyYAML 6.0 <code>FullLoader</code> rejects
+      <code>!!python/object</code> tag — test fails with <code>ConstructorError</code>.
+      Passing requires <code>yaml.UnsafeLoader</code>, which is forbidden.<br><br>
+      <strong>Options:</strong><br>
+      1. Migrate — rewrite specs to plain-dict YAML; use <code>yaml.safe_load</code><br>
+      2. Accept risk with sign-off — restrict to trusted paths; document control<br>
+      3. Pin &amp; isolate — keep 5.3.1, schedule migration sprint
+    </div>
+
+    <div class="status-row" style="margin-top:.25rem;">
+      <div class="dot dot-amber"></div>
+      <span class="status-label status-amber">⏸ Paused — awaiting human</span>
+    </div>
+
+    <table class="info">
+      <tr><td>Policy deadline</td><td>24 hours</td></tr>
+      <tr><td>Fixed at</td><td>—</td></tr>
+      <tr><td>SLA status</td><td><span style="color:#d97706;">⏸ Paused</span></td></tr>
+    </table>
+
+    <div class="tests">
+      <span class="label">Baseline → after bump (before rollback)</span><br>
+      1 passed in 0.01s  →  FAILED: ConstructorError (!!python/object tag)
+    </div>
+  </div>
+
+  <!-- inventory — MEDIUM, ESCALATED (Python 3.9) -->
+  <div class="card" style="border-left:4px solid #c00;">
+    <div class="card-header">
+      <div>
+        <div class="card-title">inventory</div>
+        <div class="card-pkg">requests 2.32.5 · urllib3 2.6.3 (unchanged)</div>
+      </div>
+      <span class="badge badge-medium">Medium</span>
+    </div>
+
+    <div style="font-weight:700;color:#dc2626;font-size:.88rem;margin:.25rem 0;">⚠ ESCALATED — needs human decision</div>
+
+    <div class="cves">
+      <span class="cve-pill">CVE-2026-25645</span>
+      <span class="cve-pill">CVE-2026-44432</span>
+      <span class="cve-pill">CVE-2026-44431</span>
+    </div>
+
+    <div class="kev-row">
+      <span class="badge-kev-none">🛡 KEV: not listed</span>
+    </div>
+    <div>
+      <span class="reach-not-reachable">○ Present, not reachable</span>
+      <div class="reach-evidence">client.py — no extract_zipped_paths call; no streaming read(amt=N); no urllib3.ProxyManager instantiation</div>
+    </div>
+
+    <div style="font-size:.78rem;background:#1a0a0a;border:1px solid #c00;border-radius:6px;padding:.65rem .75rem;color:#fca5a5;line-height:1.5;margin-top:.25rem;">
+      <strong>Why escalated:</strong> fix versions (requests 2.33.0, urllib3 2.7.0) require Python ≥ 3.10;
+      inventory runs Python 3.9. Pre-existing blocker confirmed again by this live scan.
+    </div>
+
+    <div class="status-row" style="margin-top:.25rem;">
+      <div class="dot dot-amber"></div>
+      <span class="status-label status-amber">⏸ Paused — awaiting runtime upgrade</span>
+    </div>
+
+    <table class="info">
+      <tr><td>Policy deadline</td><td>14 days (336 h)</td></tr>
+      <tr><td>Fixed at</td><td>—</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- Scan 2026-09 industry bar -->
+<div class="bar-section" style="margin-top:1.5rem;">
+  <h2>🏁 Scan 2026-09 — Time to fix vs. industry median</h2>
+  <div class="bar-track">
+    <div class="bar-fill" style="width:2%;"></div>
+  </div>
+  <div class="bar-labels">
+    <span><strong style="color:#22d3ee;">Our fix: ~6 min 18 s total (378 s)</strong> — web-gateway safe bump</span>
+    <span>Industry median: <strong>43 days</strong></span>
+  </div>
+  <p style="font-size:.8rem;color:var(--muted);margin-top:.75rem;">
+    Bar not to scale. 378 s = <strong style="color:#22d3ee;">0.010%</strong> of the 43-day (61,920 min) DBIR median.
+    29 of 31 advisories closed; 4 escalated (2 services awaiting human decision).
+  </p>
+</div>
+
 <footer>
   <span>Generated by <strong>IBM Bob</strong> CVE Autopilot</span>
-  <span>Branch: <code>autopilot/advisory-2026-09</code></span>
-  <span>2026-09-26 07:31:12 UTC</span>
+  <span>Branches: <code>autopilot/advisory-2026-09</code> · <code>autopilot/scan-2026-09</code></span>
+  <span>Advisory: 2026-09-26 07:31:12 UTC · Scan: 2026-09-27 06:37:51 UTC</span>
 </footer>
 
 </body>

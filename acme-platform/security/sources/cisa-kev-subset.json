@@ -15,5 +15,6 @@
     "CVE-2026-44432",
     "CVE-2026-44431"
   ],
+  "_scan_2026_09_note": "All CVEs from advisory-2026-09 run already present. Scan-2026-09 introduced no new CVE IDs. Catalog re-downloaded 2026-09-27 and confirmed 0 KEV matches.",
   "vulnerabilities": []
 }
