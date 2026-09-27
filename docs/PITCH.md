@@ -26,12 +26,15 @@ In our sample monorepo, upgrading PyYAML and Jinja2 to their safe versions break
 **Who it is for.** Platform, DevOps and AppSec teams in regulated industries (payments, EU product makers,
 finance, health), and the compliance owners who must show patch SLAs were met.
 
-**Why it is different.** Dependabot, Renovate and Snyk open version-bump PRs; OpenRewrite fixes only known
-recipes. Fixing arbitrary code the upgrade breaks, proving it with tests and producing SLA evidence is still
-manual. CVE Autopilot does all three.
+**Why it is different.** Dependabot, Renovate and Snyk open version-bump PRs, and GitHub can now hand a
+Dependabot alert to a coding agent that drafts a PR. CVE Autopilot packages an IBM Bob workflow across services:
+it shows each break and its fix with tests, re-scans to verify the closure, and stops for human review when a
+secure fix would change supported behaviour.
 
-**Impact.** On our demo monorepo (3 affected services, 9 CVEs, 1 critical), manual remediation is estimated at
-<X> hours; CVE Autopilot finished in 4 min 29 s, inside every SLA window, with all tests passing and none weakened.
+**Impact.** On our sample monorepo, the advisory run closed 8 of 9 CVEs in 4 min 29 s and escalated the 9th;
+a day-2 live scan closed 29 of 33 advisories in 6 min 18 s and escalated 4, including one the safety brake stopped.
+Every closure landed inside our internal policy windows (24 h Critical, 14 days Medium), and no existing test was
+changed. The DBIR 43-day median describes the size of the problem; it is not a like-for-like comparison.
 CVE Autopilot helps teams meet these deadlines; it does not by itself make anyone compliant.
 
 ## Tags
@@ -55,19 +58,31 @@ Cite these as sources on the slide. Checked 2026-09-25.
   [TrustedSec explainer](https://trustedsec.com/blog/pci-dss-vulnerability-management-the-most-misunderstood-requirement-part-3)
   Wording differs between v4.0 (critical + high) and v4.0.1 (critical); say "critical".
 
-Line for the video: "Teams take 43 days to patch vulnerabilities attackers are already using. Autopilot did ours in <Y> minutes."
+Line for the video: "Teams take a median of 43 days to patch vulnerabilities attackers are already using. On our sample repo, Autopilot fixed, tested and re-scanned in minutes, and stopped for a human when a fix was unsafe."
+Positioning line (from the audit): "CVE Autopilot uses IBM Bob to repair dependency upgrades across services, verify the results, and stop for human review when a secure fix would change supported behavior."
+Do not say: "all CVEs fixed", "43 days → 4 minutes", "only we fix code", "not reachable" (say "no path found in the checked code"), "CRA requires patching in 24 h" (CRA is about reporting; the 24 h patch window is our internal policy), "the hook auto-remediates" (it is a reminder).
 
 ## Real results from the T2 run (use these numbers)
 Source: `docs/REMEDIATION.md`, `acme-platform/remediation/results.json`, PR #5.
 - **4 min 29 s** total, advisory to tested fix, 3 affected services fixed **in parallel** by 3 Bob subagents
 - **8 of 9 CVEs** closed (1 Critical, 7 Medium); pip-audit found CVEs the advisory PDF missed (e.g. Jinja2 CVE-2025-27516, CVE-2024-56326)
 - Post-fix re-scan caught the 9th: requests 2.32.5 does not fix CVE-2026-25645 (fix 2.33.0 needs Python ≥ 3.10) → escalated to a human, not forced. Re-scan also found 2 new urllib3 CVEs (escalated). None of the 11 is in CISA KEV.
-- SBOM: 16 known vulnerabilities before, 3 after (all escalated, all "present but not reachable")
+- SBOM: 16 known vulnerabilities before, 3 after (all escalated; no call path found in the checked code, not proof they are unexploitable)
 - Critical PyYAML CVE fixed in **3 min 28 s** vs a 24 h policy window (0.24% of the window used)
 - Plain bump broke 2 of 3 services (`TypeError`, `ImportError`); Autopilot showed each failure, fixed it, all 6 tests green
 - 0 tests changed, unaffected `auth` service untouched
 - Industry median to patch a known-exploited vulnerability: **43 days** (Verizon DBIR 2026)
-- Bob cost: 3.84 Bobcoins for the full run
+- Bob cost: 3.84 Bobcoins for the T2 remediation task (re-scan, KEV, SBOM and compliance were later tasks)
+
+## Real results from the T3 run (day 2, live scan, PR #22)
+- No advisory: `pip-audit` + `npm audit` across all 6 services; plan approved by a human before any change
+- **web-gateway fixed:** axios 0.21.1 → 0.34.0, lodash 4.17.20 → 4.18.1 (29 advisories), tests 9/9 → 9/9, no code change, post-fix `npm audit`: 0
+- **reports stopped by the safety brake:** PyYAML 6.0 breaks the `!!python/object` tag the service relies on; the only way to pass was `UnsafeLoader`, which is forbidden → escalated, service untouched
+- **inventory escalated:** fixes need Python ≥ 3.10, service runs 3.9
+- auth, billing, notifications clean → untouched
+- Scorecard: 33 found · 29 closed · 4 escalated · 88% · 0 tests changed · CISA KEV: 0 matches
+- 6 min 18 s remediation run, 8.13 Bobcoins for the task
+- The developer steered Bob 4 times (use the real test suite, skip PyYAML 5.4.x which does not build on Python 3.9, exclude node_modules, merge rather than overwrite the KEV file)
 - Team Diapers: Pafras, Erin, Dyan
 
 ## Slides (PDF export of the deck, 11 slides, 2–3 sentences each)

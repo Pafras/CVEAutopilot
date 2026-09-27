@@ -22,7 +22,7 @@ Date: 2026-09-26
 
 ## Notes
 
-- The advisory (docs/advisory-2026-09.md) lists 4 CVEs across 3 packages. The PR description enumerates 9 CVEs (1 Critical, 8 Medium) by including additional CVEs in the same version ranges fixed by each bump; all fall within the fixed versions confirmed above.
+- The advisory (docs/advisory-2026-09.md) lists 4 CVEs across 3 packages. The PR description enumerates 9 CVEs (1 Critical, 8 Medium) by including additional CVEs in the same version ranges fixed by each bump; all fall within the fixed versions confirmed above. **Correction 27 Sep 2026:** not all of them — CVE-2026-25645 is not fixed by requests 2.32.5 (fix 2.33.0 needs Python ≥ 3.10). The post-fix re-scan caught it; final result is 8 of 9 closed, 1 escalated.
 - `yaml.load(f, Loader=yaml.SafeLoader)` is the correct minimal fix for CVE-2020-14343 (PyYAML 6.x makes the `Loader` argument mandatory).
 - Importing `Markup`/`escape` from `markupsafe` instead of `jinja2` is the only required code change for the Jinja2 3.x migration; `autoescape=True` on the Environment was already present and is unchanged.
 - No public function signatures were altered in any service.

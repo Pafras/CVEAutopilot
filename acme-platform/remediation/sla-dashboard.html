@@ -246,9 +246,9 @@
       <br>
       <strong>KEV status:</strong> none of the 3 CVEs are listed in CISA KEV (catalog 2026.09.25).<br>
       <strong>Reachability:</strong>
-      <span style="color:#94a3b8;">○ CVE-2026-25645 — present, not reachable</span> (no extract_zipped_paths call) ·
-      <span style="color:#94a3b8;">○ CVE-2026-44432 — present, not reachable</span> (no streaming read(amt=N)) ·
-      <span style="color:#94a3b8;">○ CVE-2026-44431 — present, not reachable</span> (no direct urllib3.ProxyManager)<br>
+      <span style="color:#94a3b8;">○ CVE-2026-25645 — no path found in checked code</span> (no extract_zipped_paths call) ·
+      <span style="color:#94a3b8;">○ CVE-2026-44432 — no path found in checked code</span> (no streaming read(amt=N)) ·
+      <span style="color:#94a3b8;">○ CVE-2026-44431 — no path found in checked code</span> (no direct urllib3.ProxyManager)<br>
       <br>
       <strong>Action required:</strong> upgrade inventory runtime to Python 3.10+, then bump
       requests to 2.33.0 and urllib3 to 2.7.0.
@@ -391,17 +391,17 @@
       </tr>
       <tr>
         <td>CVE-2024-35195</td>
-        <td class="reach-not-reachable">○ Present, not reachable</td>
+        <td class="reach-not-reachable">○ No path found in checked code</td>
         <td class="reach-evidence">client.py:6-10 — verify never set to False on the Session</td>
       </tr>
       <tr>
         <td>CVE-2024-47081</td>
-        <td class="reach-not-reachable">○ Present, not reachable</td>
+        <td class="reach-not-reachable">○ No path found in checked code</td>
         <td class="reach-evidence">client.py:3 — URL is constant SUPPLIER_API; no user input reaches it</td>
       </tr>
       <tr>
         <td>CVE-2026-25645</td>
-        <td class="reach-not-reachable">○ Present, not reachable</td>
+        <td class="reach-not-reachable">○ No path found in checked code</td>
         <td class="reach-evidence">client.py — no call to extract_zipped_paths anywhere in service code</td>
       </tr>
     </table>
@@ -443,6 +443,7 @@
     Bar is not to scale — our total remediation time (4 min 29 s) is <strong style="color:#22d3ee;">0.007%</strong>
     of the 43-day (61,920 min) industry median from the Verizon DBIR 2026.
     8 of 9 CVEs fixed well inside policy windows (24 h / 14 days); CVE-2026-25645 escalated, deadline 2026-10-10.
+    <em>Context, not a like-for-like comparison: the DBIR figure is organisation-wide remediation of known-exploited (CISA KEV) vulnerabilities in production; our time is remediation of a sample repo, and none of these CVEs is in KEV.</em>
   </p>
 </div>
 
@@ -702,7 +703,7 @@
       <span class="badge-kev-none">🛡 KEV: not listed</span>
     </div>
     <div>
-      <span class="reach-not-reachable">○ Present, not reachable</span>
+      <span class="reach-not-reachable">○ No path found in checked code</span>
       <div class="reach-evidence">client.py — no extract_zipped_paths call; no streaming read(amt=N); no urllib3.ProxyManager instantiation</div>
     </div>
 
@@ -737,6 +738,7 @@
   <p style="font-size:.8rem;color:var(--muted);margin-top:.75rem;">
     Bar not to scale. 378 s = <strong style="color:#22d3ee;">0.010%</strong> of the 43-day (61,920 min) DBIR median.
     29 of 33 advisories closed; 4 escalated (2 services awaiting human decision).
+    <em>Context, not a like-for-like comparison: the DBIR figure is organisation-wide remediation of known-exploited (CISA KEV) vulnerabilities in production; our time is remediation of a sample repo, and none of these CVEs is in KEV.</em>
   </p>
 </div>
 

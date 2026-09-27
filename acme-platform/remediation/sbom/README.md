@@ -12,7 +12,7 @@ Files: `<service>-before.cdx.json` / `<service>-after.cdx.json`.
 |---------|---------------|---------------|------------------------|----------------------|
 | PyYAML  | 5.3.1         | 6.0.3         | PYSEC-2021-142 — arbitrary code execution via `full_load` (incomplete fix for CVE-2020-1747) | **none** |
 
-**Result:** 1 vulnerability closed. Safe bump, no code changes.
+**Result:** 1 vulnerability closed. Breaking fix, not a plain bump: PyYAML 6 makes the `Loader` argument mandatory, so `config_loader.py` now calls `yaml.load(f, Loader=yaml.SafeLoader)`. *(Correction 27 Sep 2026)*
 
 ---
 
