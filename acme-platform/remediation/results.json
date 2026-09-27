@@ -245,7 +245,7 @@
       "escalation_reason": "requests 2.33.0 and urllib3 2.7.0 (the fix versions) drop support for Python 3.9; upgrading the runtime is a prerequisite",
       "escalation_options": [
         "migrate — upgrade inventory runtime to Python 3.10+, then bump requests==2.33.0 and urllib3==2.7.0",
-        "accept risk with sign-off — all three CVEs are 'present but not reachable'; document compensating control",
+        "accept risk with sign-off — no call path to the three CVEs was found in the checked code (static check, not proof of non-exploitability); document compensating control",
         "pin and isolate — keep current versions, schedule Python runtime upgrade sprint"
       ]
     }

@@ -9,7 +9,7 @@ fixes the code the upgrade breaks, and produces the evidence an auditor asks for
 A security scan flags vulnerable dependencies. A developer then spends hours on manual work:
 read the advisory, find which services use the package, bump it, find out the bump breaks the code,
 fix it, re-run tests, write the PR. Across many services this takes days, and critical CVEs stay open
-past policy deadlines. Dependabot/Renovate open the bump PR; **fixing what the bump breaks is still manual.**
+past policy deadlines. Dependabot/Renovate open the bump PR, and GitHub can now hand a Dependabot alert to a coding agent that drafts a PR; **showing the break, the fix, the verified closure and the SLA evidence in one reviewable package is still manual.**
 
 **Why now: patch deadlines are becoming law and audit items.**
 - **EU Cyber Resilience Act, Art. 14** — since **11 Sep 2026**, manufacturers of products with digital elements
@@ -90,10 +90,10 @@ Security advisory PDF in → tested fix + SLA evidence out, in minutes.
 ## 8. Competition
 | Tool | Bumps version | Fixes code the bump breaks | Proves with tests | SLA evidence |
 |---|---|---|---|---|
-| Dependabot / Renovate | ✅ | ❌ | CI only | ❌ |
+| Dependabot / Renovate | ✅ | via a coding agent (draft PR) | CI only | ❌ |
 | Snyk Fix PRs | ✅ | ❌ | CI only | partial (dashboards) |
 | OpenRewrite / Moderne | ✅ | ✅ for known recipes | ❌ | ❌ |
-| **CVE Autopilot** | ✅ | ✅ any change, reads migration notes | ✅ before/after | ✅ |
+| **CVE Autopilot** | ✅ | ✅ the breaking changes in our sample (2 types); stops and escalates when a secure fix would change behaviour | ✅ before/after + re-scan | ✅ |
 
 ## 9. Constraints
 - **Bob IDE is the core component.** All solution code is Bob-assisted.

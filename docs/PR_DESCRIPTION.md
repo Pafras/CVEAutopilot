@@ -45,7 +45,7 @@ Started: 2026-09-26 07:26:43 UTC | Finished: 2026-09-26 07:31:12 UTC | **Wall-cl
 | CVEs | CVE-2023-32681, CVE-2024-35195, CVE-2024-47081, CVE-2026-25645 |
 | Impact | Proxy-Authorization header leak on HTTPS redirects; TLS verify bypass; netrc credential leak; zip path predictability |
 | Policy deadline | 14 days |
-| SLA status | ✅ Inside SLA (~2 min vs 14 days) |
+| SLA status | ⚠️ 3 of 4 closed inside SLA (~2 min vs 14 days). **Correction 27 Sep 2026:** requests 2.32.5 does not fix CVE-2026-25645 (fix is 2.33.0, which needs Python ≥ 3.10); the post-fix re-scan caught it and it was escalated |
 | Files | `services/inventory/requirements.txt` |
 | Code change | None (safe bump) |
 | Tests | 2 passed → 2 passed |

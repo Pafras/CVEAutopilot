@@ -27,8 +27,11 @@ See [`docs/architecture.md`](docs/architecture.md) for the full Mermaid flowchar
 In short: Bob reads the advisory PDF in **Plan mode** (extract CVEs, pip-audit cross-check, find usages,
 mark unaffected services), waits for human approval, then switches to **Agent mode** and runs one
 subagent per affected service in parallel. Each subagent baselines tests, bumps the dependency, fixes
-any breaking changes, and rolls back on failure. Bob then writes `docs/REMEDIATION.md`, a `docs/CHANGELOG.md`
+the breaking changes it finds, and rolls back on failure. If the only way to pass is to weaken security or a
+test, the **safety brake** stops and escalates to a human instead. Bob then writes `docs/REMEDIATION.md`, a `docs/CHANGELOG.md`
 entry, PR description, and a self-contained SLA dashboard. The Streamlit app displays all outputs.
+A project hook (`.bob/hooks/suggest-autopilot.sh`) reminds you to run CVE Autopilot after you edit a dependency
+manifest; it does not start a remediation by itself.
 
 ## Run the demo
 
