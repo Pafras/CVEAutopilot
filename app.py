@@ -1,6 +1,10 @@
 import html as _html
+import hashlib
+import io
 import json
 import math
+import zipfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 import streamlit as st
@@ -8,6 +12,13 @@ import streamlit.components.v1 as components
 
 ROOT = Path(__file__).parent
 _NA = "Not generated yet — run CVE Autopilot"
+_REMEDIATION = "acme-platform/remediation/"
+_RESULTS = _REMEDIATION + "results.json"
+_SLA = _REMEDIATION + "sla-dashboard.html"
+_REPORT = "docs/REMEDIATION.md"
+_ADVISORY = "docs/advisory-2026-09.md"
+_PDF = "acme-platform/security/advisory-2026-09.pdf"
+_CORE = (_RESULTS, _SLA, _REPORT)
 
 st.set_page_config(page_title="CVE Autopilot", layout="wide")
 
@@ -151,6 +162,79 @@ tab_scorecard, tab_sla, tab_diffs, tab_report, tab_advisory = st.tabs(
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
+def _read_evidence(root):
+    """Read only allowlisted regular files, excluding symlinks at every level."""
+    root = root.resolve()
+    files, warnings = {}, []
+    optional = (_REMEDIATION + "sbom/README.md", "docs/COMPLIANCE.md", _ADVISORY, _PDF)
+    paths = [root / name for name in (*_CORE, *optional)]
+    missing_optional = []
+
+    def safe(path):
+        relative = path.relative_to(root)
+        return ("\\" not in relative.as_posix()
+                and not any(p.is_symlink() for p in (path, *path.parents) if p != root)
+                and path.resolve().is_relative_to(root))
+
+    for directory, pattern in ((_REMEDIATION, "*.diff"),
+                               (_REMEDIATION + "sbom/", "*-before.cdx.json"),
+                               (_REMEDIATION + "sbom/", "*-after.cdx.json")):
+        folder = root / directory
+        matches = []
+        try:
+            if safe(folder) and folder.is_dir():
+                matches = sorted(folder.glob(pattern))
+        except OSError as exc:
+            warnings.append(f"Skipped {directory}: {exc}")
+        paths.extend(matches)
+        if not matches:
+            missing_optional.append(directory + pattern)
+
+    for path in paths:
+        name = path.relative_to(root).as_posix()
+        try:
+            if not safe(path):
+                warnings.append(f"Skipped {name}: symlink or unsafe path.")
+            elif path.is_file():
+                files[name] = path.read_bytes()
+            elif path.exists():
+                warnings.append(f"Skipped {name}: not a regular file.")
+        except OSError as exc:
+            warnings.append(f"Skipped {name}: unreadable ({exc}).")
+    missing_optional.extend(name for name in optional if name not in files)
+    return files, warnings, missing_optional
+
+
+def _evidence_zip(files, missing_optional, warnings):
+    """Hash exactly the bytes written; the manifest describes this export only."""
+    manifest = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "files": [{"path": name, "size_bytes": len(content),
+                   "sha256": hashlib.sha256(content).hexdigest()}
+                  for name, content in sorted(files.items())],
+        "missing_core": [name for name in _CORE if name not in files],
+        "missing_optional": missing_optional,
+        "warnings": warnings,
+    }
+    output = io.BytesIO()
+    with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        for name, content in sorted(files.items()):
+            archive.writestr(name, content)
+        archive.writestr("MANIFEST.json", json.dumps(manifest, indent=2))
+    return output.getvalue(), manifest
+
+
+def _evidence_text(name):
+    content = evidence_files.get(name)
+    if content is None:
+        return None
+    try:
+        return content.decode("utf-8")
+    except UnicodeError:
+        st.warning(f"Cannot display {name}: invalid UTF-8. The ZIP preserves the original bytes.")
+        return None
+
+
 def _validate_scorecard(scorecard):
     """Validate a display copy; never repair or mutate the recorded evidence."""
     result = scorecard.copy()
@@ -321,14 +405,24 @@ def _sec(title):
 
 # ── Scorecard tab ──────────────────────────────────────────────────────────────
 scorecard_errors = []
+evidence_files, evidence_warnings, missing_optional = _read_evidence(ROOT)
+diff_files = {Path(name).stem: name for name in evidence_files
+              if Path(name).parent.as_posix() == _REMEDIATION.rstrip("/")
+              and name.endswith(".diff")}
+data = None
 with tab_scorecard:
-    results_path = ROOT / "acme-platform" / "remediation" / "results.json"
+    _sec("Recorded remediation snapshot")
+    st.caption(f"Source: {_RESULTS}")
+    st.caption("Run identity / scan timestamp not recorded in structured data for a single "
+               "bound run across these artifacts. Any recorded scope-specific run/date is shown "
+               "below; run start/end timestamps are not recorded.")
 
-    if not results_path.exists():
+    results_text = _evidence_text(_RESULTS)
+    if results_text is None:
         st.info("Scorecard not generated yet — run CVE Autopilot")
     else:
         try:
-            data = json.loads(results_path.read_text("utf-8"))
+            data = json.loads(results_text)
             if not isinstance(data, dict):
                 raise ValueError("root is not a JSON object")
         except (json.JSONDecodeError, ValueError) as exc:
@@ -344,7 +438,7 @@ with tab_scorecard:
                 for error in scorecard_errors:
                     st.error(f"Evidence inconsistent — {error}. Affected metrics are n/a.")
                 st.markdown(
-                    '<p class="cva-cap">Recorded values from this demo run. '
+                    '<p class="cva-cap">Recorded values by artifact scope. '
                     "SLA compliance, time, and Bobcoins apply to closed CVEs only. "
                     "Time and Bobcoins are recorded run values, not whole-workflow totals. "
                     "<em>Verified by re-scan</em> is an artifact claim; "
@@ -405,6 +499,11 @@ with tab_scorecard:
                         )
                     )
                     st.markdown(f'<div class="cva-sr">{cells}</div>', unsafe_allow_html=True)
+                    c1, c2, c3 = st.columns(3)
+                    _metric(c1, "Open findings (scan)",
+                            cf_rv - cc_rv if None not in (cf_rv, cc_rv) else None)
+                    _metric(c2, "Recorded time (scan)", _fmt(scan, "total_time_seconds", " s"))
+                    _metric(c3, "Breaking changes repaired (scan)", _fmt(scan, "breaking_changes_repaired"))
 
                     rows = ""
                     svc_s   = _join_list(scan.get("services_scanned"))
@@ -479,6 +578,15 @@ with tab_scorecard:
                                  if sc is not None else "closed CVEs")
 
                     metric_rows = [
+                        [
+                            ("Advisory CVEs closed / found",
+                             f"{cc}/{cf}" if None not in (cc, cf) else None,
+                             "Recorded advisory counts; separate from scan scope"),
+                            ("Recorded time (advisory)", _fmt(adv, "total_time_seconds", " s"),
+                             "Recorded total_time_seconds, not whole-workflow time"),
+                            ("Breaking changes repaired (advisory)", _fmt(adv, "breaking_changes_repaired"),
+                             "Recorded breaking_changes_repaired"),
+                        ],
                         [
                             ("Remediation rate",    _fmt(adv, "remediation_rate_pct", "%"),
                              f"cves_closed ÷ cves_found × 100 — {scope}"),
@@ -582,13 +690,86 @@ with tab_scorecard:
                             for e in cves_list
                         ])
 
+    findings = data.get("findings") if isinstance(data, dict) else None
+    _sec("Services represented in this artifact")
+    if isinstance(findings, list):
+        services = sorted({f["service"] for f in findings if isinstance(f, dict)
+                           and isinstance(f.get("service"), str) and f["service"].strip()})
+        st.text(", ".join(services) if services else "Not recorded")
+        st.caption("Services mentioned in findings; this is not the complete scanned scope or repository coverage.")
+        _sec("Recorded finding evidence")
+        st.caption("Each entry preserves its recorded grouping. Test results, versions and fixed_at "
+                   "do not establish closure for every CVE in the group. A service diff may also "
+                   "cover other findings or runs. Raw bump errors / re-scan logs: Not recorded as separate evidence.")
+        for index, finding in enumerate(findings, 1):
+            if not isinstance(finding, dict):
+                st.warning(f"Finding {index}: unexpected shape — skipped.")
+                continue
+
+            def recorded(key):
+                value = finding.get(key)
+                return value if isinstance(value, str) and value.strip() else "Not recorded"
+
+            with st.expander(f"Finding {index} · {recorded('service')} · {recorded('package')}"):
+                ids = finding.get("cves")
+                cves = ", ".join(v for v in ids if isinstance(v, str) and v.strip()) if isinstance(ids, list) else ""
+                rows = [
+                    ("Service", recorded("service")), ("Package", recorded("package")),
+                    ("CVE / advisory IDs (recorded group)", cves or "Not recorded"),
+                    ("Old → new (recorded)", f"{recorded('old')} → {recorded('new')}"),
+                    ("Tests — baseline", recorded("baseline")), ("Tests — after", recorded("after")),
+                    ("Risk", recorded("risk")), ("Status", recorded("status")),
+                    ("fixed_at (recorded, not scan time)", recorded("fixed_at")),
+                    ("Escalation reason", recorded("escalation_reason")),
+                ]
+                st.markdown('<table class="cva-dt"><tbody>'
+                            + "".join(_dt_row(key, value) for key, value in rows)
+                            + "</tbody></table>", unsafe_allow_html=True)
+                if "escalat" in (recorded("risk") + recorded("status")).lower():
+                    st.warning("Escalation recorded — requires human action; this entry is not a closure claim.")
+                # Match only enumerated filenames; JSON never supplies a filesystem path.
+                diff_name = diff_files.get(recorded("service"))
+                if diff_name:
+                    st.caption(f"Source: {diff_name}")
+                    diff_text = _evidence_text(diff_name)
+                    if diff_text is not None:
+                        st.code(diff_text, language="diff")
+                else:
+                    st.info("Diff: Not recorded for this service.")
+    else:
+        st.text("Not recorded")
+        if findings is not None:
+            st.warning("findings has an unexpected shape — skipping finding evidence.")
+
+    _sec("Download evidence pack")
+    st.caption("Stored artifacts are not guaranteed to belong to one bound run and may contradict "
+               "each other. Export time is not scan time; hashes verify exported bytes, not historical authenticity.")
+    zip_bytes, manifest = _evidence_zip(evidence_files, missing_optional, evidence_warnings)
+    for warning in evidence_warnings:
+        st.warning(warning)
+    if manifest["missing_core"] or missing_optional or evidence_warnings:
+        st.warning("Partial evidence pack — unavailable core files: "
+                   + (", ".join(manifest["missing_core"]) or "none")
+                   + ". Unavailable optional files/patterns: "
+                   + (", ".join(missing_optional) or "none")
+                   + ". Any skipped files are listed above.")
+    st.caption(f"{len(evidence_files)} evidence file(s) + MANIFEST.json (generated only inside the ZIP).")
+    with st.expander("Archive contents"):
+        st.text("\n".join(f"{item['path']} ({item['size_bytes']} bytes)" for item in manifest["files"])
+                + "\nMANIFEST.json")
+    if not evidence_files:
+        st.info("No evidence files available to download.")
+    st.download_button("Download evidence ZIP", zip_bytes,
+                       file_name="cve-autopilot-evidence.zip", mime="application/zip",
+                       disabled=not evidence_files)
+
 # ── SLA evidence tab ───────────────────────────────────────────────────────────
 with tab_sla:
     if scorecard_errors:
         st.warning("Evidence inconsistent — the scorecard contains conflicts. The summary in this "
                    "historical SLA HTML cannot yet be considered consistent. The original artifact is preserved.")
-    p = ROOT / "acme-platform" / "remediation" / "sla-dashboard.html"
-    if p.exists():
+    evidence = _evidence_text(_SLA)
+    if evidence is not None:
         st.markdown(
             '<p class="cva-ti">Self-contained SLA dashboard generated by CVE Autopilot. '
             "Per-CVE: advisory deadline, time to fix, test results before and after. "
@@ -596,7 +777,6 @@ with tab_sla:
             unsafe_allow_html=True,
         )
         # Presentation only: the saved evidence file and every data value stay intact.
-        evidence = p.read_text("utf-8")
         for icon in ("📊", "🔍", "✅", "🪙", "⚠", "🛡️", "🛡", "🔎", "⏸"):
             evidence = evidence.replace(icon, "")
         evidence_style = """
@@ -665,48 +845,49 @@ with tab_sla:
 
 # ── Diffs tab ──────────────────────────────────────────────────────────────────
 with tab_diffs:
-    diff_files = sorted((ROOT / "acme-platform" / "remediation").glob("*.diff"))
     if diff_files:
         st.markdown(
             f'<p class="cva-ti">{len(diff_files)} diff file(s) recorded. '
             "Each shows the exact code changes CVE Autopilot applied.</p>",
             unsafe_allow_html=True,
         )
-        for d in diff_files:
-            with st.expander(d.name):
-                st.code(d.read_text("utf-8"), language="diff")
+        for name in sorted(diff_files.values()):
+            with st.expander(Path(name).name):
+                diff_text = _evidence_text(name)
+                if diff_text is not None:
+                    st.code(diff_text, language="diff")
     else:
         st.info(_NA)
 
 # ── Report tab ─────────────────────────────────────────────────────────────────
 with tab_report:
-    p = ROOT / "docs" / "REMEDIATION.md"
-    if p.exists():
+    report = _evidence_text(_REPORT)
+    if report is not None:
         st.markdown(
             '<p class="cva-ti">Per-CVE remediation report: service, versions, files changed, '
             "test results before and after, risk classification, and time taken.</p>",
             unsafe_allow_html=True,
         )
-        st.markdown(p.read_text("utf-8"))
+        st.markdown(report)
     else:
         st.info(_NA)
 
 # ── Advisory tab ───────────────────────────────────────────────────────────────
 with tab_advisory:
-    pdf = ROOT / "acme-platform" / "security" / "advisory-2026-09.pdf"
-    md  = ROOT / "docs" / "advisory-2026-09.md"
-    if pdf.exists() or md.exists():
+    pdf = evidence_files.get(_PDF)
+    md = _evidence_text(_ADVISORY)
+    if pdf is not None or md is not None:
         st.markdown(
             '<p class="cva-ti">The original advisory that triggered this remediation run. '
             "CVE Autopilot parsed this document in Plan mode to extract findings.</p>",
             unsafe_allow_html=True,
         )
-    if pdf.exists():
-        st.download_button("Download advisory-2026-09.pdf", pdf.read_bytes(),
+    if pdf is not None:
+        st.download_button("Download advisory-2026-09.pdf", pdf,
                            file_name="advisory-2026-09.pdf", mime="application/pdf")
     else:
         st.info(_NA)
-    if md.exists():
-        st.markdown(md.read_text("utf-8"))
+    if md is not None:
+        st.markdown(md)
     else:
         st.info(_NA)
