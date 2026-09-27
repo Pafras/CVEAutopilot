@@ -1,5 +1,6 @@
 import html as _html
 import json
+import math
 from pathlib import Path
 
 import streamlit as st
@@ -150,6 +151,109 @@ tab_scorecard, tab_sla, tab_diffs, tab_report, tab_advisory = st.tabs(
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
+def _validate_scorecard(scorecard):
+    """Validate a display copy; never repair or mutate the recorded evidence."""
+    result = scorecard.copy()
+    errors = []
+    counts = (
+        "cves_found", "cves_closed", "sla_compliant_cves", "auto_fixed_services",
+        "escalated_services", "breaking_changes_repaired", "tests_changed",
+        "sla_open_inside_window", "new_cves_found", "new_cves_closed",
+        "advisory_cves_still_open", "open_cves_total", "distinct_packages_with_vulns",
+    )
+
+    def inconsistent(scope, key, reason):
+        errors.append(f"{scope}.{key}: {reason}")
+
+    for scope in ("advisory_scope", "scan_scope", "rescan_findings"):
+        source = scorecard.get(scope)
+        if not isinstance(source, dict):
+            continue
+        values = result[scope] = source.copy()
+        invalid = set()
+        for key in (*counts, "total_time_seconds", "bobcoins_total",
+                    "remediation_rate_pct", "sla_compliance_rate_pct", "verified_by_rescan"):
+            value = source.get(key)
+            if value is None:
+                continue
+            if key == "verified_by_rescan":
+                valid = type(value) is bool
+                expected = "a boolean"
+            elif key in counts:
+                valid = type(value) is int and value >= 0
+                expected = "a nonnegative integer"
+            else:
+                valid = (type(value) in (int, float) and value >= 0
+                         and (type(value) is int or math.isfinite(value)))
+                expected = "a finite nonnegative number"
+                if key.endswith("_pct"):
+                    valid = valid and value <= 100
+                    expected = "a finite number between 0 and 100"
+            if not valid:
+                values[key] = None
+                invalid.add(key)
+                inconsistent(scope, key, f"expected {expected}")
+
+        for numerator, denominator in (("cves_closed", "cves_found"),
+                                       ("sla_compliant_cves", "cves_closed"),
+                                       ("new_cves_closed", "new_cves_found")):
+            n, d = values.get(numerator), values.get(denominator)
+            if n is not None and d is not None and n > d:
+                values[numerator] = None
+                inconsistent(scope, numerator, f"must not exceed {denominator}")
+
+        for key, numerator, denominator in (
+            ("remediation_rate_pct", "new_cves_closed" if scope == "rescan_findings" else "cves_closed",
+             "new_cves_found" if scope == "rescan_findings" else "cves_found"),
+            ("sla_compliance_rate_pct", "sla_compliant_cves", "cves_closed"),
+        ):
+            n, d = values.get(numerator), values.get(denominator)
+            rate = n / d * 100 if n is not None and d else None
+            stored = values.get(key)
+            if rate is not None and stored is not None and abs(stored - rate) > 0.5:
+                invalid.add(key)
+                inconsistent(scope, key, f"differs from {numerator} / {denominator} by more than 0.5 percentage point")
+            values[key] = f"{rate:.0f}" if rate is not None and key not in invalid else None
+
+        for key, total, precision in (("time_per_cve_seconds", "total_time_seconds", 1),
+                                      ("bobcoins_per_cve", "bobcoins_total", 2)):
+            n, d = values.get(total), values.get("cves_closed")
+            values[key] = None
+            if n is not None and d:
+                try:
+                    per_cve = n / d
+                    if not math.isfinite(per_cve):
+                        raise OverflowError
+                except OverflowError:
+                    inconsistent(scope, key, "derived value is not finite")
+                else:
+                    values[key] = f"{per_cve:.{precision}f}"
+
+    rescan = result.get("rescan_findings")
+    advisory = result.get("advisory_scope")
+    if isinstance(rescan, dict):
+        found = advisory.get("cves_found") if isinstance(advisory, dict) else None
+        closed = advisory.get("cves_closed") if isinstance(advisory, dict) else None
+        advisory_open = rescan.get("advisory_cves_still_open")
+        if found is None or closed is None:
+            rescan["advisory_cves_still_open"] = None
+        elif advisory_open is not None and advisory_open != found - closed:
+            inconsistent("rescan_findings", "advisory_cves_still_open", "does not equal cves_found - cves_closed")
+            rescan["advisory_cves_still_open"] = None
+        parts = (rescan.get("advisory_cves_still_open"), rescan.get("new_cves_found"),
+                 rescan.get("new_cves_closed"))
+        total = parts[0] + parts[1] - parts[2] if None not in parts else None
+        stored = rescan.get("open_cves_total")
+        if stored is not None and total is not None and stored != total:
+            inconsistent("rescan_findings", "open_cves_total", "does not equal advisory_cves_still_open + new_cves_found - new_cves_closed")
+            total = None
+        # An invalid stored total must not be silently replaced by a valid sum.
+        if scorecard["rescan_findings"].get("open_cves_total") is not None and stored is None:
+            total = None
+        rescan["open_cves_total"] = total
+    return result, errors
+
+
 def _fmt(d, key, suffix=""):
     v = d.get(key) if isinstance(d, dict) else None
     if v is None or isinstance(v, (dict, list)):
@@ -161,7 +265,7 @@ def _metric(col, label, val, *, help=""):
     if val is None:
         display = "n/a"
     elif isinstance(val, bool):
-        display = "Yes ✓" if val else "No ✗"
+        display = "Yes (artifact claim)" if val else "No ✗"
     elif isinstance(val, (int, float)):
         display = val
     elif isinstance(val, (dict, list)):
@@ -216,6 +320,7 @@ def _sec(title):
 
 
 # ── Scorecard tab ──────────────────────────────────────────────────────────────
+scorecard_errors = []
 with tab_scorecard:
     results_path = ROOT / "acme-platform" / "remediation" / "results.json"
 
@@ -235,11 +340,15 @@ with tab_scorecard:
             if not isinstance(scorecard, dict):
                 st.info("Scorecard not generated yet — run CVE Autopilot")
             else:
+                scorecard, scorecard_errors = _validate_scorecard(scorecard)
+                for error in scorecard_errors:
+                    st.error(f"Evidence inconsistent — {error}. Affected metrics are n/a.")
                 st.markdown(
                     '<p class="cva-cap">Recorded values from this demo run. '
                     "SLA compliance, time, and Bobcoins apply to closed CVEs only. "
-                    "<em>Verified by re-scan</em> confirms reported closures; "
-                    "open CVEs remain.</p>",
+                    "Time and Bobcoins are recorded run values, not whole-workflow totals. "
+                    "<em>Verified by re-scan</em> is an artifact claim; "
+                    "the viewer performs no new scan or per-CVE closure verification.</p>",
                     unsafe_allow_html=True,
                 )
 
@@ -260,46 +369,39 @@ with tab_scorecard:
                     if badge or date_txt:
                         st.markdown(badge + date_txt, unsafe_allow_html=True)
 
-                    # Normalise all numeric fields — raw .get() can return
-                    # dicts/lists/bools; _fmt strips non-scalars to None.
+                    # Every numeric display uses the validated copy.
                     cf   = _fmt(scan, "cves_found")
                     cc   = _fmt(scan, "cves_closed")
                     esc  = _fmt(scan, "escalated_services")
                     tc   = _fmt(scan, "tests_changed")
                     rate = _fmt(scan, "remediation_rate_pct")
 
-                    # Colour only when value is a genuine numeric literal.
-                    # Missing/container values → neutral (no colour class).
                     cf_rv   = scan.get("cves_found")
                     cc_rv   = scan.get("cves_closed")
                     esc_rv  = scan.get("escalated_services")
                     tc_rv   = scan.get("tests_changed")
-                    rate_rv = scan.get("remediation_rate_pct")
-
-                    def _num(v):
-                        return isinstance(v, (int, float)) and not isinstance(v, bool)
 
                     # Label uses "Findings" — scan mixes GHSA + CVE identifiers.
                     cells = (
                         _stat(
                             "Findings closed / found",
                             f"{cc}/{cf}" if None not in (cc, cf) else None,
-                            "g" if (_num(cc_rv) and _num(cf_rv) and cc_rv >= cf_rv) else "",
+                            "g" if (cf_rv and cc_rv == cf_rv) else "",
                         )
                         + _stat(
                             "Remediation rate",
                             f"{rate}%" if rate is not None else None,
-                            "g" if (_num(rate_rv) and rate_rv >= 90) else "",
+                            "g" if (rate is not None and float(rate) >= 90) else "",
                         )
                         + _stat(
                             "Services escalated", esc,
-                            "a" if (_num(esc_rv) and esc_rv > 0)
-                            else ("g" if (_num(esc_rv) and esc_rv == 0) else ""),
+                            "a" if (esc_rv is not None and esc_rv > 0)
+                            else ("g" if esc_rv == 0 else ""),
                         )
                         + _stat(
                             "Tests changed", tc,
-                            "r" if (_num(tc_rv) and tc_rv > 0)
-                            else ("g" if (_num(tc_rv) and tc_rv == 0) else ""),
+                            "r" if (tc_rv is not None and tc_rv > 0)
+                            else ("g" if tc_rv == 0 else ""),
                         )
                     )
                     st.markdown(f'<div class="cva-sr">{cells}</div>', unsafe_allow_html=True)
@@ -324,13 +426,14 @@ with tab_scorecard:
                     # Normalise numeric detail fields before rendering.
                     sla_s = _fmt(scan, "sla_compliance_rate_pct")
                     tpc_s = _fmt(scan, "time_per_cve_seconds")
-                    bpc_s = _fmt(scan, "bobcoins_per_cve")   # show if recorded, n/a stays absent
-                    if sla_s is not None:
-                        rows += _dt_row("SLA compliance (closed findings)", f"{sla_s}%")
-                    if tpc_s is not None:
-                        rows += _dt_row("Time per finding (closed)", f"{tpc_s} s")
-                    if bpc_s is not None:
-                        rows += _dt_row("Bobcoins per finding", str(bpc_s))
+                    bpc_s = _fmt(scan, "bobcoins_per_cve")
+                    rows += _dt_row("SLA compliance (closed findings)", f"{sla_s}%" if sla_s is not None else None)
+                    rows += _dt_row("Time per finding (closed)", f"{tpc_s} s" if tpc_s is not None else None,
+                                    "Recorded run values")
+                    rows += _dt_row("Bobcoins per finding", bpc_s, "Recorded run values")
+                    vr_scan = scan.get("verified_by_rescan")
+                    rows += _dt_row("Verified by re-scan", "Yes (artifact claim)" if vr_scan is True
+                                    else "No" if vr_scan is False else None)
                     if rows:
                         with st.expander("Scan details · services, findings and timing"):
                             st.markdown(
@@ -344,19 +447,16 @@ with tab_scorecard:
                         for svc, reason in esc_notes.items():
                             st.warning(f"**Escalation — {svc}:** {reason}")
 
-                    # Fix 5: tests_changed > 0 in scan scope → policy error
-                    # (tc is already _fmt-normalised; compare numeric raw value)
-                    if _num(tc_rv) and tc_rv > 0:
+                    if tc_rv is not None and tc_rv > 0:
                         st.error(
                             f"tests_changed = {tc} in scan scope — policy violation: "
                             "CVE Autopilot must not modify existing tests."
                         )
 
-                    vr_scan = scan.get("verified_by_rescan")  # bool — not normalised by _fmt
                     if vr_scan is True:
                         st.markdown(
-                            '<div class="cva-n-g"><strong>Verified by re-scan</strong>'
-                            ' — scan-scope closures confirmed. Open CVEs remain.</div>',
+                            '<div class="cva-n-i"><strong>Verified by re-scan — artifact claim</strong>'
+                            ' — recorded for scan-scope closures; not newly verified by this viewer.</div>',
                             unsafe_allow_html=True,
                         )
                     elif vr_scan is False:
@@ -383,7 +483,7 @@ with tab_scorecard:
                             ("Remediation rate",    _fmt(adv, "remediation_rate_pct", "%"),
                              f"cves_closed ÷ cves_found × 100 — {scope}"),
                             ("Verified by re-scan", adv.get("verified_by_rescan"),
-                             "Closures confirmed by post-fix re-scan"),
+                             "Artifact claim about closures; no new verification by this viewer"),
                             ("SLA compliance",      _fmt(adv, "sla_compliance_rate_pct", "%"),
                              f"sla_compliant_cves ÷ cves_closed × 100 — {sla_scope}"),
                         ],
@@ -397,9 +497,9 @@ with tab_scorecard:
                         ],
                         [
                             ("Time per CVE",     _fmt(adv, "time_per_cve_seconds", " s"),
-                             "total_time_seconds ÷ cves_closed"),
+                             "Recorded run values: total_time_seconds ÷ cves_closed"),
                             ("Bobcoins per CVE", _fmt(adv, "bobcoins_per_cve"),
-                             "bobcoins_total ÷ cves_closed"),
+                             "Recorded run values: bobcoins_total ÷ cves_closed"),
                         ],
                     ]
                     for row in metric_rows:
@@ -410,8 +510,8 @@ with tab_scorecard:
                     verified = adv.get("verified_by_rescan")
                     if verified is True:
                         st.markdown(
-                            '<div class="cva-n-g"><strong>Verified by re-scan</strong>'
-                            ' — advisory-scope closures confirmed.</div>',
+                            '<div class="cva-n-i"><strong>Verified by re-scan — artifact claim</strong>'
+                            ' — recorded for advisory-scope closures; not newly verified by this viewer.</div>',
                             unsafe_allow_html=True,
                         )
                     elif verified is False:
@@ -421,7 +521,7 @@ with tab_scorecard:
                         )
 
                     tc = adv.get("tests_changed")
-                    if isinstance(tc, (int, float)) and tc > 0:
+                    if tc is not None and tc > 0:
                         st.error(
                             f"tests_changed = {tc} — policy violation: "
                             "CVE Autopilot must not modify existing tests."
@@ -446,7 +546,11 @@ with tab_scorecard:
                     _metric(c2, "Advisory CVEs still open", _fmt(rescan, "advisory_cves_still_open"),
                             help="Advisory-scope CVEs not yet closed")
                     _metric(c3, "Total open CVEs",          _fmt(rescan, "open_cves_total"),
-                            help="new_cves_found + advisory_cves_still_open")
+                            help="advisory_cves_still_open + new_cves_found − new_cves_closed")
+                    if rescan.get("open_cves_total") is None:
+                        st.info("Total open CVEs is n/a: valid, consistent advisory counts, "
+                                "advisory_cves_still_open, new_cves_found and new_cves_closed "
+                                "are required. Missing counts are not assumed to be zero.")
 
                     c4, c5 = st.columns(2)
                     _metric(c4, "Escalated services (re-scan)", _fmt(rescan, "escalated_services"),
@@ -466,7 +570,8 @@ with tab_scorecard:
 
                     cves_list = rescan.get("cves")
                     if isinstance(cves_list, list) and cves_list:
-                        _sec("Open CVEs from re-scan")
+                        _sec("Recorded re-scan findings")
+                        st.caption("Recorded identifiers; aggregate counts do not establish closure for each CVE.")
                         st.table([
                             {
                                 "CVE ID":      str(e.get("id",      "")) if isinstance(e, dict) else "",
@@ -479,6 +584,9 @@ with tab_scorecard:
 
 # ── SLA evidence tab ───────────────────────────────────────────────────────────
 with tab_sla:
+    if scorecard_errors:
+        st.warning("Evidence inconsistent — the scorecard contains conflicts. The summary in this "
+                   "historical SLA HTML cannot yet be considered consistent. The original artifact is preserved.")
     p = ROOT / "acme-platform" / "remediation" / "sla-dashboard.html"
     if p.exists():
         st.markdown(

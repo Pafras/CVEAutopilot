@@ -1,21 +1,25 @@
 """
 Focused AppTest verification for the Scorecard tab (task #8).
 Run from the workspace root:
-    python .scorecard-check/test_scorecard.py
+    python3.14 .scorecard-check/test_scorecard.py
 
 All tests run against the real app.py source — ROOT is patched per-test run to
 point at an isolated directory with the chosen fixture. Real evidence files are
 never mutated; the real results.json is used as-is for the real-data case.
 """
 
+import json
 import shutil
 import sys
+import tempfile
 import traceback
 from pathlib import Path
 
 HERE      = Path(__file__).parent
 WORKSPACE = HERE.parent
-FIXTURES  = HERE / "fixtures"
+RUNS = tempfile.TemporaryDirectory(prefix="cve-scorecard-")
+FIXTURES = Path(RUNS.name) / "fixtures"
+shutil.copytree(HERE / "fixtures", FIXTURES)
 REAL_APP  = WORKSPACE / "app.py"
 REAL_JSON = WORKSPACE / "acme-platform" / "remediation" / "results.json"
 
@@ -24,9 +28,9 @@ REAL_JSON = WORKSPACE / "acme-platform" / "remediation" / "results.json"
 # Test-directory builder
 # ---------------------------------------------------------------------------
 
-def build_app(fixture_name: str | None, *, use_real_json: bool = False, tag: str = "") -> Path:
+def build_app(fixture_name: str | None, *, use_real_json: bool = False, tag: str = "", data=None) -> Path:
     """
-    Build an isolated test directory under .scorecard-check/run_<tag|name>/.
+    Build an isolated test directory under the system temporary directory.
     Copies the real app.py into it, rewriting ROOT to point at that directory.
 
     fixture_name=None + use_real_json=False → no results.json (missing-file case).
@@ -40,7 +44,7 @@ def build_app(fixture_name: str | None, *, use_real_json: bool = False, tag: str
         slug = "real"
     else:
         slug = fixture_name.replace(".", "_") if fixture_name else "none"
-    test_dir = HERE / f"run_{slug}"
+    test_dir = Path(tempfile.mkdtemp(prefix=f"{slug}-", dir=RUNS.name))
 
     # Create layout mirroring workspace
     rem_dir = test_dir / "acme-platform" / "remediation"
@@ -49,7 +53,9 @@ def build_app(fixture_name: str | None, *, use_real_json: bool = False, tag: str
     (test_dir / "acme-platform" / "security").mkdir(parents=True, exist_ok=True)
 
     # Place results.json
-    if use_real_json:
+    if data is not None:
+        (rem_dir / "results.json").write_text(json.dumps(data))
+    elif use_real_json:
         shutil.copy(REAL_JSON, rem_dir / "results.json")
     elif fixture_name is not None:
         shutil.copy(FIXTURES / fixture_name, rem_dir / "results.json")
@@ -107,7 +113,7 @@ def test_real_data():
         # Advisory scope — AppTest returns metric values as strings for str displays,
         # or the original numeric type for bare int/float.
         assert m["Remediation rate"]       == "89%",    f"got {m['Remediation rate']!r}"
-        assert m["Verified by re-scan"]    == "Yes ✓",  f"got {m['Verified by re-scan']!r}"
+        assert m["Verified by re-scan"]    == "Yes (artifact claim)",  f"got {m['Verified by re-scan']!r}"
         assert m["SLA compliance"]         == "100%",   f"got {m['SLA compliance']!r}"
         # _fmt returns int/float scalars; AppTest may preserve type
         assert str(m["Auto-fixed services"]) == "3",    f"got {m['Auto-fixed services']!r}"
@@ -132,6 +138,7 @@ def test_real_data():
         assert ids == {"CVE-2026-25645", "CVE-2026-44432", "CVE-2026-44431"}, f"ids: {ids}"
         # verified_by_rescan=true must NOT fire the NOT-confirmed warning
         assert not any("NOT confirmed" in w.value for w in at.warning), "spurious NOT-confirmed warning"
+        assert not at.error, [e.value for e in at.error]
     return run_test("real_data", app, checks)
 
 
